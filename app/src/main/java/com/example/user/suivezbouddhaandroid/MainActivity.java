@@ -20,27 +20,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class MainActivity extends AppCompatActivity {
-    private Client client;
+    //private Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        client = new Client();
     }
 
     public void startTestServeurActivity(View view){
-        Intent myIntent = new Intent(this, TestServeur.class);
-        this.startActivity(myIntent);
+        Intent myIntent = new Intent(MainActivity.this, TestServeur.class);
+        startActivity(myIntent);
     }
 
-    public void updateMessage(View view){
-        TextView textView = (TextView) findViewById(R.id.message);
-        textView.setText(client.getMessage());
-    }
-
-    public void sendMessage(View view) {
-        EditText text = (EditText) findViewById(R.id.messageToSend);
-        client.sendMessage(text.getText().toString());
-    }
 }
