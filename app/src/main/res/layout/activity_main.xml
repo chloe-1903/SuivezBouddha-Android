@@ -10,52 +10,24 @@
     tools:context="com.example.user.suivezbouddhaandroid.MainActivity">
 
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Server"
+        android:id="@+id/buttonTestServeur"
+        android:onClick="startTestServeurActivity"
+        android:layout_above="@+id/buttonStart"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dp" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Connect to server"
-            android:id="@+id/connect"
-            android:onClick="connect"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="80dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:id="@+id/buttonStart"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="193dp" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Display Last message"
-            android:id="@+id/buttonGetMessage"
-            android:layout_gravity="center_horizontal"
-            android:onClick="updateMessage"
-            android:layout_marginBottom="20dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Server Answer Here"
-            android:id="@+id/message"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="80dp" />
-
-        <EditText
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/messageToSend"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send message"
-            android:onClick="sendMessage"
-            android:layout_gravity="center_horizontal"/>
-    </LinearLayout>
 
 </RelativeLayout>
