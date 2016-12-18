@@ -33,4 +33,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(myIntent);
     }
 
+    public void startSphero(View view){
+        Intent myIntent = new Intent(getApplicationContext(), Sphero.class);
+        startActivity(myIntent);
+    }
+
+
+
 }
