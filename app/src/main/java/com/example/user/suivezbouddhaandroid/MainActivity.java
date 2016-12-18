@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startTestServeurActivity(View view){
-        Intent myIntent = new Intent(MainActivity.this, TestServeur.class);
+        Intent myIntent = new Intent(getApplicationContext(), TestServeur.class);
         startActivity(myIntent);
     }
 
