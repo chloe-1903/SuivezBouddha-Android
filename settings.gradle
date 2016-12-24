@@ -1,1 +1,1 @@
-include ':app'
+include ':app', ':RobotPickerLibrary', ':CalibrationLibrary', ':JoystickLibrary', ':SpeedSliderLibrary', ':ColorPickerLibrary'

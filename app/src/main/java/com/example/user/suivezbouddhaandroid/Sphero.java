@@ -4,6 +4,7 @@ package com.example.user.suivezbouddhaandroid;
  * Created by lucas on 16/12/16.
  */
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.Manifest;
@@ -12,22 +13,28 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.orbotix.ConvenienceRobot;
 import com.orbotix.DualStackDiscoveryAgent;
+import com.orbotix.calibration.api.CalibrationEventListener;
+import com.orbotix.calibration.api.CalibrationImageButtonView;
+import com.orbotix.calibration.api.CalibrationView;
 import com.orbotix.command.RollCommand;
 import com.orbotix.common.DiscoveryException;
 import com.orbotix.common.Robot;
 import com.orbotix.common.RobotChangedStateListener;
 import com.orbotix.le.RobotLE;
 import com.orbotix.macro.MacroObject;
+import com.orbotix.macro.cmd.Delay;
 import com.orbotix.macro.cmd.Roll;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Hello World Sample
@@ -42,6 +49,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private ConvenienceRobot mRobot;
     private Button goButton;
     private Button stopButton;
+    private CalibrationView _calibrationView;
+    private CalibrationImageButtonView _calibrationButtonView;
 
     private MacroObject macro;
 
@@ -75,7 +84,22 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             }
         }
 
+        setupCalibration();
+
+        // Here, you need to route all the touch events to the joystick and calibration view so that they know about
+        // them. To do this, you need a way to reference the view (in this case, the id "entire_view") and attach
+        // an onTouchListener which in this case is declared anonymously and invokes the
+        // Controller#interpretMotionEvent() method on the joystick and the calibration view.
+        findViewById(R.id.sphero).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                _calibrationView.interpretMotionEvent(event);
+                return true;
+            }
+        });
+
         initViews();
+
     }
 
     private void initViews() {
@@ -178,9 +202,13 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     @Override
     public void handleRobotChangedState( Robot robot, RobotChangedStateNotificationType type ) {
         Log.d("Sphero", String.valueOf(type));
-        Toast.makeText(getApplicationContext(), String.valueOf(type), Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), String.valueOf(type), Toast.LENGTH_SHORT).show();
         switch( type ) {
             case Online: {
+
+                _calibrationView.setEnabled(true);
+                _calibrationButtonView.setEnabled(true);
+
                 //If robot uses Bluetooth LE, Developer Mode can be turned on.
                 //This turns off DOS protection. This generally isn't required.
                 if( robot instanceof RobotLE) {
@@ -192,6 +220,11 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 //Start blinking the robot's LED
                 blink( false );
+                break;
+            }
+            case Disconnected: {
+                _calibrationView.setEnabled(false);
+                _calibrationButtonView.setEnabled(false);
                 break;
             }
         }
@@ -207,12 +240,11 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 macro = new MacroObject();
 
-                //Ouest
-                macro.addCommand( new Roll(0.25f, 180, 5000));
-                //Est
-                macro.addCommand( new Roll(0.25f, 0, 5000));
+                macro.addCommand( new Roll(0.50f, 0, 1000));
+                macro.addCommand( new Roll(0.50f, 180, 2000));
+
                 //Stop
-                macro.addCommand( new Roll(0.0f, 0, 0));
+                //macro.addCommand( new Roll(0.0f, 0, 0));
 
                 //Send the macro to the robot and play
                 macro.setMode( MacroObject.MacroObjectMode.Normal );
@@ -228,5 +260,61 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 break;
             }
         }
+    }
+
+    /**
+     * Sets up the calibration gesture and button
+     */
+    private void setupCalibration() {
+        // Get the view from the xml file
+        _calibrationView = (CalibrationView)findViewById(R.id.calibrationView);
+        _calibrationView.setDotColor(0xFF1990FF);
+        _calibrationView.setDotSize(600);
+
+        // Set the glow. You might want to not turn this on if you're using any intense graphical elements.
+        _calibrationView.setShowGlow(false);
+        // Register anonymously for the calibration events here. You could also have this class implement the interface
+        // manually if you plan to do more with the callbacks.
+        _calibrationView.setCalibrationEventListener(new CalibrationEventListener() {
+            /**
+             * Invoked when the user begins the calibration process.
+             */
+            @Override
+            public void onCalibrationBegan() {
+                // The easy way to set up the robot for calibration is to use ConvenienceRobot#calibrating(true)
+                Log.v("Sphero", "Calibration began!");
+                mRobot.calibrating(true);
+            }
+
+            /**
+             * Invoked when the user moves the calibration ring
+             * @param angle The angle that the robot has rotated to.
+             */
+            @Override
+            public void onCalibrationChanged(float angle) {
+                // The usual thing to do when calibration happens is to send a roll command with this new angle, a speed of 0
+                // and the calibrate flag set.
+                mRobot.rotate(angle);
+            }
+
+            /**
+             * Invoked when the user stops the calibration process
+             */
+            @Override
+            public void onCalibrationEnded() {
+                // This is where the calibration process is "committed". Here you want to tell the robot to stop as well as
+                // stop the calibration process.
+                mRobot.stop();
+                mRobot.calibrating(false);
+            }
+        });
+        // Like the joystick, turn this off until a robot connects.
+        _calibrationView.setEnabled(false);
+
+        // To set up the button, you need a calibration view. You get the button view, and then set it to the
+        // calibration view that we just configured.
+        _calibrationButtonView = (CalibrationImageButtonView) findViewById(R.id.calibrateButton);
+        _calibrationButtonView.setCalibrationView(_calibrationView);
+        _calibrationButtonView.setEnabled(false);
     }
 }

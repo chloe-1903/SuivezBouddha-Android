@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sphero"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.user.suivezbouddhaandroid.Sphero">
-
-    <Button
-        android:text="Go"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:id="@+id/go"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
 
     <Button
         android:text="Stop"
@@ -27,5 +15,43 @@
         android:layout_below="@+id/go"
         android:layout_alignLeft="@+id/go"
         android:layout_alignStart="@+id/go" />
+
+    <Button
+        android:text="Go"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:id="@+id/go"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <com.orbotix.calibration.api.CalibrationImageButtonView
+        android:id="@+id/calibrateButton"
+        android:visibility="visible"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:background="#00000000"
+        android:scaleType="centerInside"
+        android:layout_marginBottom="10dp"
+        app:widget_orientation="above"
+        app:foreground_color="#FFFFFFFF"
+        app:background_color="#FF1990FF"
+        app:calibration_circle_radius="50dp"
+        app:calibration_center_x = "30dp"
+        app:calibration_center_y = "-80dp"/>
+
+
+    <!-- This needs to be the last element in your xml page if you want two finger calibration to work
+anywhere in your application's page -->
+    <com.orbotix.calibration.api.CalibrationView
+        android:id="@+id/calibrationView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:twoFingerEnabled="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
