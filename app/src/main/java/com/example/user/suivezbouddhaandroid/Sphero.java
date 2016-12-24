@@ -241,10 +241,17 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 macro = new MacroObject();
 
                 macro.addCommand( new Roll(0.50f, 0, 1000));
-                macro.addCommand( new Roll(0.50f, 180, 2000));
+                macro.addCommand( new Delay(1000));
+
+                //Pause
+                macro.addCommand( new Roll(0.0f, 0, 500));
+                macro.addCommand( new Delay(500));
+
+                macro.addCommand( new Roll(0.50f, 180, 1000));
+                macro.addCommand( new Delay(1000));
 
                 //Stop
-                //macro.addCommand( new Roll(0.0f, 0, 0));
+                macro.addCommand( new Roll(0.0f, 0, 0));
 
                 //Send the macro to the robot and play
                 macro.setMode( MacroObject.MacroObjectMode.Normal );
