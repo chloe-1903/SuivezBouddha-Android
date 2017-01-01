@@ -38,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(myIntent);
     }
 
+    public void startPlan(View view){
+        Intent myIntent = new Intent(getApplicationContext(), Plan.class);
+        startActivity(myIntent);
+    }
+
 
 
 }
