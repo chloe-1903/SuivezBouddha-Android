@@ -34,12 +34,12 @@ public class mapView extends View{
 
 
     //draw the view - will be called after touch event
-    @Override
+   /* @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.plan1), 0, 0, canvasPaint);
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
-    }
+    }*/
 
     //register user touches as drawing action
     @Override
