@@ -15,20 +15,24 @@ import android.widget.TextView;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Stack;
 
 public class Plan extends AppCompatActivity implements Observer {
     Client client;
     private float x;
     private float y;
+    private Stack<String> qrCodesIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
-        x=500; y=600;
-        drawPosition();
+        qrCodesIds = new Stack<>();
+        for (int i=8; i>0 ; i--)
+            qrCodesIds.push(String.valueOf(i));
         client = new Client();
         client.addObserver(this);
+        client.connect();
     }
 
     public void drawPosition(){
@@ -47,8 +51,10 @@ public class Plan extends AppCompatActivity implements Observer {
         });
     }
 
-    public void connect(View view){
-        client.connect();
+    //Cette fonction sera appelée une fois un QRCode décodé
+    public void askDirection(View view){
+        if (!qrCodesIds.empty())
+            client.askDirection(qrCodesIds.pop());
     }
 
     @Override

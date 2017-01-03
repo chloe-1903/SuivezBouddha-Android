@@ -3,12 +3,18 @@ package com.example.user.suivezbouddhaandroid;
 import android.graphics.Point;
 import android.util.Log;
 
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.Observable;
+import android.util.JsonReader;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
 
 /**
  * Created by user on 16/12/16.
@@ -20,6 +26,9 @@ public class Client extends Observable {
     private String message ;
     private float x;
     private float y;
+    private float speed;
+    private int direction;
+    private int delay;
 
     public Client(){
         isConnected = false;
@@ -33,7 +42,7 @@ public class Client extends Observable {
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("message", onMessage);
-        mSocket.on("newPosition", onNewPosition);
+        mSocket.on("newDirection", onNewDirection);
     }
 
     private Emitter.Listener onConnect = new Emitter.Listener() {
@@ -61,15 +70,29 @@ public class Client extends Observable {
         }
     };
 
-    private Emitter.Listener onNewPosition = new Emitter.Listener() {
+    private Emitter.Listener onNewDirection = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             System.out.println("---------> New position : "+ args[0]);
-            x = Float.valueOf(args[0].toString().split(",")[0]);
-            y = Float.valueOf(args[0].toString().split(",")[1]);
-            setChanged();
-            notifyObservers();
-            clearChanged();
+            try {
+                JSONObject jsonAnswer = new JSONObject(args[0].toString());
+                String position = jsonAnswer.getString("position");
+                System.out.println(jsonAnswer.getString("position"));
+                x = Float.valueOf(position.split("-")[0]);
+                y = Float.valueOf(position.split("-")[1]);
+                JSONObject jsonDirection = jsonAnswer.getJSONObject("direction");
+                speed = Float.valueOf(jsonDirection.getString("speed"));
+                direction = jsonDirection.getInt("direction");
+                delay = jsonDirection.getInt("delay");
+                System.out.println("seed : " + speed);
+                System.out.println("dir : " + direction);
+                System.out.println("del : " + delay);
+                setChanged();
+                notifyObservers();
+                clearChanged();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     };
 
@@ -95,6 +118,16 @@ public class Client extends Observable {
 
     }
 
+    public void askDirection(String id)
+    {
+        if (isConnected)
+        {
+            System.out.println("---------> Asking position for id : "+ id);
+            mSocket.emit("askDirection", id);
+        }
+
+    }
+
     public void connect()
     {
         mSocket.connect();
@@ -106,5 +139,17 @@ public class Client extends Observable {
 
     public float getY() {
         return y;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public int getDelay() {
+        return delay;
     }
 }
