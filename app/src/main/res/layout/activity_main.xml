@@ -25,7 +25,7 @@
             android:onClick="startSphero"
             android:background="@drawable/button"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="50dp"
             android:textColor="@color/white" />
 
         <Button
@@ -36,7 +36,18 @@
             android:onClick="startPlan"
             android:background="@drawable/button"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/white"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Main activity"
+            android:id="@+id/buttonMainActivity"
+            android:onClick="startMain"
+            android:background="@drawable/button"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
             android:textColor="@color/white"/>
 
         <Button
@@ -47,7 +58,7 @@
             android:onClick="startTestServeurActivity"
             android:background="@drawable/button"
             android:textColor="@color/white"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="100dp" />
     </LinearLayout>

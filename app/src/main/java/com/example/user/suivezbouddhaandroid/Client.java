@@ -5,9 +5,12 @@ import android.util.Log;
 
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import android.util.JsonReader;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,13 +25,14 @@ import io.socket.emitter.Emitter;
 public class Client extends Observable {
     private Socket mSocket;
     private Boolean isConnected;
-    private final String serverAddress = "http://192.168.1.95:8080/";//http://192.168.1.95:8080/
+    private final String serverAddress = "http://10.212.111.29:8080/";//http://192.168.1.95:8080/
     private String message ;
     private float x;
     private float y;
     private float speed;
     private int direction;
     private int delay;
+    private HashMap<Integer, String> rooms;
 
     public Client(){
         isConnected = false;
@@ -43,6 +47,7 @@ public class Client extends Observable {
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("message", onMessage);
         mSocket.on("newDirection", onNewDirection);
+        mSocket.on("allRooms", onAllRooms);
     }
 
     private Emitter.Listener onConnect = new Emitter.Listener() {
@@ -50,7 +55,6 @@ public class Client extends Observable {
         public void call(Object... args) {
             isConnected = true;
             System.out.println("---------> Connect");
-            mSocket.emit("who", "Chloé");
         }
     };
 
@@ -96,6 +100,28 @@ public class Client extends Observable {
         }
     };
 
+    private Emitter.Listener onAllRooms = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            System.out.println("---------> New message : "+ args[0]);
+            message = args[0].toString();
+            JSONObject jsonAnswer = null;
+            try {
+                jsonAnswer = new JSONObject(args[0].toString());
+                rooms = new HashMap<>();
+                JSONArray jsonRooms = jsonAnswer.getJSONArray("rooms");
+                for (int i = 0; i< jsonRooms.length(); i++) {
+                    JSONObject jsonRoom = jsonRooms.getJSONObject(i);
+                    System.out.println(jsonRoom.getInt("number")+ "-"+ jsonRoom.getString("activity"));
+                    rooms.put(jsonRoom.getInt("number"), jsonRoom.getString("activity"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
     private Emitter.Listener onMessage = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -125,7 +151,17 @@ public class Client extends Observable {
             System.out.println("---------> Asking position for id : "+ id);
             mSocket.emit("askDirection", id);
         }
+    }
 
+    public void askAllRooms()
+    {
+        if (isConnected)
+        {
+            System.out.println("---------> Asking for all rooms");
+            mSocket.emit("askAllRooms");
+        } else {
+            System.out.println("NOT CONNECTED!");
+        }
     }
 
     public void connect()
@@ -152,4 +188,6 @@ public class Client extends Observable {
     public int getDelay() {
         return delay;
     }
+
+    public HashMap<Integer, String> getRooms(){ return rooms;}
 }

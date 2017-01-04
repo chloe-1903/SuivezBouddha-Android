@@ -18,7 +18,7 @@ import java.util.Observer;
 import java.util.Stack;
 
 public class Plan extends AppCompatActivity implements Observer {
-    Client client;
+    private Client client;
     private float x;
     private float y;
     private Stack<String> qrCodesIds;
@@ -28,11 +28,12 @@ public class Plan extends AppCompatActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
         qrCodesIds = new Stack<>();
-        for (int i=8; i>0 ; i--)
+        for (int i=8; i>1 ; i--)
             qrCodesIds.push(String.valueOf(i));
         client = new Client();
         client.addObserver(this);
         client.connect();
+        client.askDirection("0");
     }
 
     public void drawPosition(){
@@ -44,8 +45,8 @@ public class Plan extends AppCompatActivity implements Observer {
                 Canvas c = new Canvas(tempBitmap);
                 c.drawBitmap(bitmap, 0, 0, null);
                 Paint p = new Paint();
-                p.setColor(Color.rgb(245, 20, 65));
-                c.drawCircle(x, y, 20, p);
+                p.setColor(Color.rgb(204, 102, 119));
+                c.drawCircle(x, y, 30, p);
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
             }
         });
