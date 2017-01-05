@@ -8,15 +8,15 @@ import android.app.Application;
 
 public class SharedData extends Application {
 
-    private boolean data;
+    private static boolean data;
 
 
-    public boolean getData() {
+    public static boolean getData() {
         return data;
     }
 
-    public void setData(boolean data) {
-        this.data = data;
+    public static void setData(boolean data) {
+        SharedData.data = data;
     }
 
 }

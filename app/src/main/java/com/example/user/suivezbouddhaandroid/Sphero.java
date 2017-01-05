@@ -4,6 +4,7 @@ package com.example.user.suivezbouddhaandroid;
  * Created by lucas on 16/12/16.
  */
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -55,10 +56,12 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private ConvenienceRobot mRobot;
     private Button goButton;
     private Button stopButton;
+    private Button scanButton;
     private CalibrationView _calibrationView;
     private CalibrationImageButtonView _calibrationButtonView;
     private Client client;
     private JSONObject jsonObject;
+    private boolean data;
 
     private MacroObject macro;
 
@@ -108,8 +111,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         initViews();
 
-        SharedData sharedData = (SharedData) getApplicationContext();
-        boolean data = sharedData.getData();
+        //SharedData sharedData = (SharedData) getApplicationContext();
+        data = SharedData.getData();
+
+        Log.i("Sphero", String.valueOf(data));
 
     }
 
@@ -117,9 +122,12 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         goButton = (Button) findViewById(R.id.go);
         stopButton = (Button) findViewById(R.id.stop);
+        scanButton = (Button) findViewById(R.id.scan);
 
         goButton.setOnClickListener( this );
         stopButton.setOnClickListener( this );
+        scanButton.setAlpha(.5f);
+        scanButton.setClickable(false);
     }
 
 
@@ -273,6 +281,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 client.addObserver(this);
                 client.connect();
 
+                while(!client.isConnected());
+
                 //TODO 2 en static, ca pue !
                 /*
                 for(int i = 0; i < 2; i++) {
@@ -280,12 +290,66 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                     client.askDirection(String.valueOf(i));
 
-                    //TODO scan le QR Code pour continuer
+                    //Bouton scan
+                    scanButton.setClickable(true);
+                    scanButton.setAlpha(1f);
+                    */
+                       /*
+                    scanButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //TODO scan le QR Code pour continuer
+                            Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                            startActivity(myIntent);
+                        }
+                    });
+                    */
+                    /*
+                    Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                    startActivity(myIntent);
                 }
                 */
-                while(!client.isConnected());
                 Log.i("Sphero", "Instructions globales : " + 0);
                 client.askDirection(String.valueOf(0));
+
+                /*
+                //Bouton scan
+                scanButton.setClickable(true);
+                scanButton.setAlpha(1f);
+                scanButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO scan le QR Code pour continuer
+                        Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                        startActivity(myIntent);
+                    }
+                });
+                */
+
+                Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                startActivity(myIntent);
+
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+
+                            while(!data) {
+                                Log.i("Sphero", String.valueOf(data));
+                                data = SharedData.getData();
+                            }
+
+                            Log.i("Sphero", String.valueOf(data));
+
+                            Log.i("Sphero", "Instructions globales : " + 1);
+                            client.askDirection(String.valueOf(1));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                thread.start();
 
                 break;
             }
@@ -352,6 +416,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         _calibrationButtonView.setCalibrationView(_calibrationView);
         _calibrationButtonView.setEnabled(false);
     }
+
+    boolean test = false;
 
     @Override
     public void update(Observable observable, Object o) {
