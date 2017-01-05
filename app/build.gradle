@@ -1,8 +1,17 @@
 apply plugin: 'com.android.application'
 
+def VUFORIA_SDK_DIR = '..'
+def NATIVE_LIB_DIR = 'build/lib'
+def JAR_DIR = 'build/java/vuforia'
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+
+    sourceSets.main {
+        jni.srcDirs = []
+        jniLibs.srcDir "$VUFORIA_SDK_DIR/$NATIVE_LIB_DIR/"
+    }
 
     defaultConfig {
         applicationId "com.example.user.suivezbouddhaandroid"
@@ -11,9 +20,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    archivesBaseName = rootProject.projectDir.getName()
+
     buildTypes {
         release {
             minifyEnabled false
+            ndk {
+                abiFilters "armeabi-v7a"
+            }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -27,4 +42,5 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     compile project(':CalibrationLibrary')
+    compile files('libs/Vuforia.jar')
 }
