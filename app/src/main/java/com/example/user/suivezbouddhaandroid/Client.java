@@ -1,14 +1,10 @@
 package com.example.user.suivezbouddhaandroid;
 
-import android.graphics.Point;
 import android.util.Log;
-
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Observable;
-import android.util.JsonReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,13 +21,11 @@ import io.socket.emitter.Emitter;
 public class Client extends Observable {
     private Socket mSocket;
     private Boolean isConnected;
-    private final String serverAddress = "http://10.212.111.29:8080/";//http://192.168.1.95:8080/
+    private final String serverAddress = "http://10.212.109.188:8080/";//http://192.168.1.95:8080/
     private String message ;
     private float x;
     private float y;
-    private float speed;
-    private int direction;
-    private int delay;
+    private JSONObject directions;
     private HashMap<Integer, String> rooms;
 
     public Client(){
@@ -46,6 +40,7 @@ public class Client extends Observable {
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("message", onMessage);
+        mSocket.on("newPosition", onNewPosition);
         mSocket.on("newDirection", onNewDirection);
         mSocket.on("allRooms", onAllRooms);
     }
@@ -54,7 +49,7 @@ public class Client extends Observable {
         @Override
         public void call(Object... args) {
             isConnected = true;
-            System.out.println("---------> Connect");
+            Log.d("->","---------> Connect");
         }
     };
 
@@ -62,7 +57,7 @@ public class Client extends Observable {
         @Override
         public void call(Object... args) {
             isConnected = false;
-            System.out.println("---------> Disconnect");
+            Log.d("->","---------> Disconnect");
         }
     };
 
@@ -70,27 +65,36 @@ public class Client extends Observable {
         @Override
         public void call(Object... args) {
             isConnected = false;
-            System.out.println("---------> Error or timeout");
+            Log.d("->", "Error or timeout");
         }
     };
+
+    private Emitter.Listener onNewPosition = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Log.d("->", "---------> New position : " + args[0]);
+            try {
+                JSONObject jsonAnswer = new JSONObject(args[0].toString());
+                String position = jsonAnswer.getString("position");
+                Log.d("->", jsonAnswer.getString("position"));
+                x = Float.valueOf(position.split("-")[0]);
+                y = Float.valueOf(position.split("-")[1]);
+                setChanged();
+                notifyObservers();
+                clearChanged();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
 
     private Emitter.Listener onNewDirection = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            System.out.println("---------> New position : "+ args[0]);
+            Log.d("->","---------> New direction : "+ args[0]);
             try {
-                JSONObject jsonAnswer = new JSONObject(args[0].toString());
-                String position = jsonAnswer.getString("position");
-                System.out.println(jsonAnswer.getString("position"));
-                x = Float.valueOf(position.split("-")[0]);
-                y = Float.valueOf(position.split("-")[1]);
-                JSONObject jsonDirection = jsonAnswer.getJSONObject("direction");
-                speed = Float.valueOf(jsonDirection.getString("speed"));
-                direction = jsonDirection.getInt("direction");
-                delay = jsonDirection.getInt("delay");
-                System.out.println("seed : " + speed);
-                System.out.println("dir : " + direction);
-                System.out.println("del : " + delay);
+                directions = new JSONObject(args[0].toString());
                 setChanged();
                 notifyObservers();
                 clearChanged();
@@ -103,7 +107,7 @@ public class Client extends Observable {
     private Emitter.Listener onAllRooms = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            System.out.println("---------> New message : "+ args[0]);
+            Log.d("->","---------> New message : "+ args[0]);
             message = args[0].toString();
             JSONObject jsonAnswer = null;
             try {
@@ -112,9 +116,12 @@ public class Client extends Observable {
                 JSONArray jsonRooms = jsonAnswer.getJSONArray("rooms");
                 for (int i = 0; i< jsonRooms.length(); i++) {
                     JSONObject jsonRoom = jsonRooms.getJSONObject(i);
-                    System.out.println(jsonRoom.getInt("number")+ "-"+ jsonRoom.getString("activity"));
+                    Log.d("->",jsonRoom.getInt("number")+ "-"+ jsonRoom.getString("activity"));
                     rooms.put(jsonRoom.getInt("number"), jsonRoom.getString("activity"));
                 }
+                setChanged();
+                notifyObservers();
+                clearChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -125,7 +132,7 @@ public class Client extends Observable {
     private Emitter.Listener onMessage = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            System.out.println("---------> New message : "+ args[0]);
+            Log.d("->","---------> New message : "+ args[0]);
             message = args[0].toString();
         }
     };
@@ -138,7 +145,7 @@ public class Client extends Observable {
     {
         if (isConnected)
         {
-            System.out.println("---------> Sending message : "+ message);
+            Log.d("->","---------> Sending message : "+ message);
             mSocket.emit("message", message);
         }
 
@@ -148,8 +155,17 @@ public class Client extends Observable {
     {
         if (isConnected)
         {
-            System.out.println("---------> Asking position for id : "+ id);
+            Log.d("->","---------> Asking direction for id : "+ id);
             mSocket.emit("askDirection", id);
+        }
+    }
+
+    public void askPosition(String id)
+    {
+        if (isConnected)
+        {
+            Log.d("->","---------> Asking position for id : "+ id);
+            mSocket.emit("askPosition", id);
         }
     }
 
@@ -157,10 +173,8 @@ public class Client extends Observable {
     {
         if (isConnected)
         {
-            System.out.println("---------> Asking for all rooms");
+            Log.d("->","---------> Asking for all rooms");
             mSocket.emit("askAllRooms");
-        } else {
-            System.out.println("NOT CONNECTED!");
         }
     }
 
@@ -177,17 +191,11 @@ public class Client extends Observable {
         return y;
     }
 
-    public float getSpeed() {
-        return speed;
-    }
-
-    public int getDirection() {
-        return direction;
-    }
-
-    public int getDelay() {
-        return delay;
-    }
-
     public HashMap<Integer, String> getRooms(){ return rooms;}
+
+    public boolean isConnected() { return isConnected;}
+
+    public JSONObject getDirections() {
+        return directions;
+    }
 }

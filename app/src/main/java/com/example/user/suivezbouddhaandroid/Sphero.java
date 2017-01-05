@@ -32,8 +32,14 @@ import com.orbotix.macro.MacroObject;
 import com.orbotix.macro.cmd.Delay;
 import com.orbotix.macro.cmd.Roll;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
@@ -44,13 +50,15 @@ import java.util.List;
  * This example also covers turning on Developer Mode for LE robots.
  */
 
-public class Sphero extends Activity implements RobotChangedStateListener, View.OnClickListener {
+public class Sphero extends Activity implements RobotChangedStateListener, View.OnClickListener, Observer {
 
     private ConvenienceRobot mRobot;
     private Button goButton;
     private Button stopButton;
     private CalibrationView _calibrationView;
     private CalibrationImageButtonView _calibrationButtonView;
+    private Client client;
+    private JSONObject jsonObject;
 
     private MacroObject macro;
 
@@ -180,6 +188,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     @Override
     protected void onStop() {
         //If the DiscoveryAgent is in discovery mode, stop it.
+        /*
         if( DualStackDiscoveryAgent.getInstance().isDiscovering() ) {
             DualStackDiscoveryAgent.getInstance().stopDiscovery();
         }
@@ -188,10 +197,29 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         if( mRobot != null ) {
             mRobot.disconnect();
             mRobot = null;
-        }
-
+        }a
+        */
+        Log.i("Sphero", "onStop");
         super.onStop();
+
     }
+
+    @Override
+    protected void onPause() {
+
+        Log.i("Sphero", "onPause");
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onResume() {
+
+        Log.i("Sphero", "onResume");
+        super.onResume();
+
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -238,27 +266,24 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         switch( v.getId() ) {
             case R.id.go: {
 
-                macro = new MacroObject();
+                client = new Client();
+                client.addObserver(this);
+                client.connect();
 
-                macro.addCommand( new Roll(0.50f, 0, 1000));
-                macro.addCommand( new Delay(1000));
+                //TODO 2 en static, ca pue !
+                /*
+                for(int i = 0; i < 2; i++) {
+                    Log.i("Sphero", "Instructions globales : " + i);
 
-                //Pause
-                macro.addCommand( new Roll(0.0f, 0, 500));
-                macro.addCommand( new Delay(500));
+                    client.askDirection(String.valueOf(i));
 
-                macro.addCommand( new Roll(0.50f, 180, 1000));
-                macro.addCommand( new Delay(1000));
+                    //TODO scan le QR Code pour continuer
+                }
+                */
+                while(!client.isConnected());
+                Log.i("Sphero", "Instructions globales : " + 0);
+                client.askDirection(String.valueOf(0));
 
-                //Stop
-                macro.addCommand( new Roll(0.0f, 0, 0));
-
-                //Send the macro to the robot and play
-                macro.setMode( MacroObject.MacroObjectMode.Normal );
-                macro.setRobot( mRobot.getRobot() );
-                macro.playMacro();
-
-                //mRobot.sendCommand(new RollCommand(90, 0.3f, RollCommand.State.GO));
                 break;
             }
             case R.id.stop: {
@@ -323,5 +348,75 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         _calibrationButtonView = (CalibrationImageButtonView) findViewById(R.id.calibrateButton);
         _calibrationButtonView.setCalibrationView(_calibrationView);
         _calibrationButtonView.setEnabled(false);
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+
+        Log.i("Sphero", "Update !");
+
+        JSONArray directions;
+        JSONObject instruction;
+
+        float speed;
+        int direction;
+        int delay;
+
+        jsonObject = client.getDirections();
+
+        try {
+
+            directions = jsonObject.getJSONArray("directions");
+
+            macro = new MacroObject();
+
+            for(int y = 0; y < directions.length(); y++) {
+                Log.i("Sphero", "Instructions locales : "+ y);
+
+                instruction = directions.getJSONObject(y);
+
+                speed = Float.parseFloat(instruction.getString("speed"));
+                direction = instruction.getInt("direction");
+                delay = instruction.getInt("delay");
+
+                macro.addCommand( new Roll(speed, direction, delay));
+                macro.addCommand( new Delay(delay));
+            }
+
+            //Stop
+            macro.addCommand( new Roll(0.0f, 0, 0));
+
+            //Send the macro to the robot and play
+            macro.setMode( MacroObject.MacroObjectMode.Normal );
+            macro.setRobot( mRobot.getRobot() );
+            macro.playMacro();
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        /*
+        macro = new MacroObject();
+
+        macro.addCommand( new Roll(0.20f, 0, 1000));
+        macro.addCommand( new Delay(1000));
+
+        //Pause
+        macro.addCommand( new Roll(0.0f, 0, 500));
+        macro.addCommand( new Delay(500));
+
+        macro.addCommand( new Roll(0.20f, 180, 1000));
+        macro.addCommand( new Delay(1000));
+
+        //Stop
+        macro.addCommand( new Roll(0.0f, 0, 0));
+
+        //Send the macro to the robot and play
+        macro.setMode( MacroObject.MacroObjectMode.Normal );
+        macro.setRobot( mRobot.getRobot() );
+        macro.playMacro();
+        */
+        //mRobot.sendCommand(new RollCommand(90, 0.3f, RollCommand.State.GO));
     }
 }
