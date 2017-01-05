@@ -1,11 +1,13 @@
 package com.example.user.suivezbouddhaandroid;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
     public void update(Observable o, Object arg) {
         rooms = client.getRooms();
         if (rooms==null) return;
-        ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
+        final ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
         ArrayList<String> array = new ArrayList<>();
         for(int num : rooms.keySet()) {
             array.add(num + " - "+ rooms.get(num));
@@ -42,10 +44,14 @@ public class MainActivity extends AppCompatActivity implements Observer{
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , array);
         listRoomsView.setAdapter(arrayAdapter);
+        listRoomsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent myIntent = new Intent(getApplicationContext(), Menu.class);
+                startActivity(myIntent);
+            }
+        });
     }
 
-    public void validate(View view){
-        Intent myIntent = new Intent(getApplicationContext(), Menu.class);
-        startActivity(myIntent);
-    }
+
 }

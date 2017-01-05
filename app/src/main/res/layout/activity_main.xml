@@ -19,12 +19,13 @@
         <ListView
             android:layout_width="300dp"
             android:layout_height="450dp"
+            android:layout_marginTop="50dp"
             android:layout_gravity="center_horizontal"
             android:background="@color/colorPrimary"
             android:choiceMode="singleChoice"
             android:id="@+id/listRoomsView" />
 
-        <Button
+        <!--Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Validate"
@@ -32,6 +33,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
             android:onClick="validate"
-            android:id="@+id/button2" />
+            android:id="@+id/button2" /-->
     </LinearLayout>
 </RelativeLayout>
