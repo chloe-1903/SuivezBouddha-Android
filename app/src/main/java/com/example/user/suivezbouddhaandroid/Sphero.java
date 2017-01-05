@@ -108,6 +108,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         initViews();
 
+        SharedData sharedData = (SharedData) getApplicationContext();
+        boolean data = sharedData.getData();
+
     }
 
     private void initViews() {

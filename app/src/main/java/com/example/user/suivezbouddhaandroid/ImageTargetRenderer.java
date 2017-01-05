@@ -222,6 +222,8 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                         if (!qrCode1)
                             Toast.makeText(mActivity, "QRCode #1 scanné", Toast.LENGTH_SHORT).show();
                         qrCode1 = true;
+                        SharedData sharedData = (SharedData) mActivity.getApplicationContext();
+                        sharedData.setData(qrCode1);
                     }
                 });
             }
@@ -232,6 +234,8 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                         if (!qrCode2)
                             Toast.makeText(mActivity, "QRCode #2 scanné", Toast.LENGTH_SHORT).show();
                         qrCode2 = true;
+                        SharedData app = (SharedData) mActivity.getApplicationContext();
+                        app.setData(qrCode2);
                     }
                 });
             }
