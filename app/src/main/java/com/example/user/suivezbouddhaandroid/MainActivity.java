@@ -1,40 +1,51 @@
 package com.example.user.suivezbouddhaandroid;
 
 import android.content.Intent;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-
-public class MainActivity extends AppCompatActivity {
-    //private Client client;
+public class MainActivity extends AppCompatActivity implements Observer{
+    private Client client;
+    private HashMap<Integer, String> rooms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        client = new Client();
+        client.connect();
+        while (! client.isConnected());
+        client.addObserver(this);
+        client.askAllRooms();
     }
 
-    public void startSphero(View view){
-        Intent myIntent = new Intent(getApplicationContext(), Sphero.class);
-        startActivity(myIntent);
+    @Override
+    public void update(Observable o, Object arg) {
+        rooms = client.getRooms();
+        if (rooms==null) return;
+        ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
+        ArrayList<String> array = new ArrayList<>();
+        for(int num : rooms.keySet()) {
+            array.add(num + " - "+ rooms.get(num));
+            Log.d("->"," ListItem " + num + " - "+ rooms.get(num) );
+        }
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , array);
+        listRoomsView.setAdapter(arrayAdapter);
     }
 
-    public void startPlan(View view){
-        Intent myIntent = new Intent(getApplicationContext(), Plan.class);
+    public void validate(View view){
+        Intent myIntent = new Intent(getApplicationContext(), Menu.class);
         startActivity(myIntent);
     }
 }
