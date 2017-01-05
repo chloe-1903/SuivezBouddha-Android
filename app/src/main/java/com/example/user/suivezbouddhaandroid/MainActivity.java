@@ -28,11 +28,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void startTestServeurActivity(View view){
-        Intent myIntent = new Intent(getApplicationContext(), TestServeur.class);
-        startActivity(myIntent);
-    }
-
     public void startSphero(View view){
         Intent myIntent = new Intent(getApplicationContext(), Sphero.class);
         startActivity(myIntent);
@@ -42,11 +37,4 @@ public class MainActivity extends AppCompatActivity {
         Intent myIntent = new Intent(getApplicationContext(), Plan.class);
         startActivity(myIntent);
     }
-
-
-    public void startMain(View view){
-        Intent myIntent = new Intent(getApplicationContext(), Main2Activity.class);
-        startActivity(myIntent);
-    }
-
 }

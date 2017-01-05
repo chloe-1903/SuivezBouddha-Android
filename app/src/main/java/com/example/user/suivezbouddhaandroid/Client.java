@@ -76,7 +76,7 @@ public class Client extends Observable {
             try {
                 JSONObject jsonAnswer = new JSONObject(args[0].toString());
                 String position = jsonAnswer.getString("position");
-                Log.d("->", jsonAnswer.getString("position"));
+                Log.d("->Position recu", jsonAnswer.getString("position"));
                 x = Float.valueOf(position.split("-")[0]);
                 y = Float.valueOf(position.split("-")[1]);
                 setChanged();

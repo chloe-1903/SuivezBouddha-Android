@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,7 +56,7 @@ public class Plan extends AppCompatActivity implements Observer {
     //Cette fonction sera appelée une fois un QRCode décodé
     public void askDirection(View view){
         if (!qrCodesIds.empty())
-            client.askDirection(qrCodesIds.pop());
+            client.askPosition(qrCodesIds.pop());
     }
 
     @Override
