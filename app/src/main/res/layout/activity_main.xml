@@ -22,7 +22,7 @@
     <ListView
         android:layout_width="300dp"
         android:layout_height="420dp"
-        android:background="@color/colorElements"
+        android:background="@color/colorPrimary"
         android:choiceMode="singleChoice"
         android:layout_marginTop="20dp"
         android:layout_centerVertical="true"

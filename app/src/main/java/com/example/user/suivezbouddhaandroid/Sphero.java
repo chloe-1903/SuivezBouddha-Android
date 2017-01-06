@@ -5,7 +5,9 @@ package com.example.user.suivezbouddhaandroid;
  */
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import android.Manifest;
@@ -37,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -69,6 +72,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
 
+    private final MediaPlayer mp = new MediaPlayer();
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -284,6 +288,24 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 client.connect();
 
                 while(!client.isConnected());
+
+                if(mp.isPlaying())
+                {
+                    mp.stop();
+                }
+
+                try {
+                    mp.reset();
+                    AssetFileDescriptor afd;
+                    afd = this.getAssets().openFd("bip.mp3");
+                    mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                    mp.prepare();
+                    mp.start();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 Log.i("Sphero", "Instructions globales : " + dataStep);
                 client.askDirection(String.valueOf(dataStep));
