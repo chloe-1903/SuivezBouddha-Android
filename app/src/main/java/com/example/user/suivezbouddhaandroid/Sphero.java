@@ -4,7 +4,10 @@ package com.example.user.suivezbouddhaandroid;
  * Created by lucas on 16/12/16.
  */
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Color;
@@ -279,7 +282,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         switch( type ) {
             case Online: {
 
-                //On remet les bouton enable ICI
+                //On remet les bouton enable
                 goButton.setAlpha(1f);
                 goButton.setClickable(true);
 
@@ -321,6 +324,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             case R.id.go: {
 
                 //On disable le bouton
+                //TODO
                 //goButton.setAlpha(0.5f);
                 //goButton.setClickable(false);
 
@@ -396,6 +400,16 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 // The easy way to set up the robot for calibration is to use ConvenienceRobot#calibrating(true)
                 Log.v("Sphero", "Calibration began!");
                 mRobot.calibrating(true);
+
+                //On verouille les boutons
+                scanButton.setAlpha(.5f);
+                scanButton.setClickable(false);
+
+                goButton.setAlpha(.5f);
+                goButton.setClickable(false);
+
+                stopButton.setAlpha(.5f);
+                stopButton.setClickable(false);
             }
 
             /**
@@ -406,7 +420,24 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             public void onCalibrationChanged(float angle) {
                 // The usual thing to do when calibration happens is to send a roll command with this new angle, a speed of 0
                 // and the calibrate flag set.
+                Log.v("Sphero", "Calibration changed!");
                 mRobot.rotate(angle);
+
+                //Calibration Sound
+                if(!mp.isPlaying()) {
+                    try {
+                        mp.reset();
+                        AssetFileDescriptor afd;
+                        afd = assets.openFd("R2D2_calibration.mp3");
+                        mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                        mp.prepare();
+                        mp.start();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             /**
@@ -418,6 +449,16 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 // stop the calibration process.
                 mRobot.stop();
                 mRobot.calibrating(false);
+
+                //On deverouille les boutons
+                scanButton.setAlpha(1f);
+                scanButton.setClickable(true);
+
+                goButton.setAlpha(1f);
+                goButton.setClickable(true);
+
+                stopButton.setAlpha(1f);
+                stopButton.setClickable(true);
             }
         });
         // Like the joystick, turn this off until a robot connects.
@@ -483,6 +524,23 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 macro.addCommand( new RGB(0, 255, 0, 10000));
                 macro.addCommand( new Delay( 10000 ) );
                 finishSound(delayTotal);
+
+                //TODO : Yolo popup ici
+                runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
+                        alertDialog.setTitle("Attention un escalier !");
+                        alertDialog.setMessage("Veuillez s'il vous plaît monter les escaliers avec Bouddha. Scanner ensuite le prochaine QRCode.");
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                });
             }
 
             //Send the macro to the robot and play
