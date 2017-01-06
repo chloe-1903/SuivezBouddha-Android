@@ -293,41 +293,22 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     //Bouton scan
                     scanButton.setClickable(true);
                     scanButton.setAlpha(1f);
-                    */
-                       /*
-                    scanButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //TODO scan le QR Code pour continuer
-                            Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                            startActivity(myIntent);
-                        }
-                    });
-                    */
-                    /*
-                    Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                    startActivity(myIntent);
                 }
                 */
                 Log.i("Sphero", "Instructions globales : " + 0);
                 client.askDirection(String.valueOf(0));
 
-                /*
+
                 //Bouton scan
                 scanButton.setClickable(true);
                 scanButton.setAlpha(1f);
                 scanButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //TODO scan le QR Code pour continuer
                         Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
                         startActivity(myIntent);
                     }
                 });
-                */
-
-                Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                startActivity(myIntent);
 
                 Thread thread = new Thread() {
                     @Override
@@ -335,10 +316,12 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         try {
 
                             while(!data) {
-                                Log.i("Sphero", String.valueOf(data));
+                                //Log.i("Sphero", String.valueOf(data));
                                 data = SharedData.getData();
                             }
 
+                            scanButton.setClickable(false);
+                            scanButton.setAlpha(0.5f);
                             Log.i("Sphero", String.valueOf(data));
 
                             Log.i("Sphero", "Instructions globales : " + 1);
