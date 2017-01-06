@@ -43,14 +43,20 @@ public class MainActivity extends AppCompatActivity implements Observer{
             Log.d("->"," ListItem " + num + " - "+ rooms.get(num) );
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , array);
-        listRoomsView.setAdapter(arrayAdapter);
-        listRoomsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent myIntent = new Intent(getApplicationContext(), Menu.class);
-                startActivity(myIntent);
+            public void run() {
+                listRoomsView.setAdapter(arrayAdapter);
+                listRoomsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Intent myIntent = new Intent(getApplicationContext(), Menu.class);
+                        startActivity(myIntent);
+                    }
+                });
             }
         });
+
     }
 
 }
