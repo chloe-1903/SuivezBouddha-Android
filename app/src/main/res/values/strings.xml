@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SuivezBouddhaAndroid</string>
+    <string name="selectRoom"><u>Choisissez une salle :</u></string>
 </resources>

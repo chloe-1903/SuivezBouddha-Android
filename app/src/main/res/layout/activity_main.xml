@@ -8,31 +8,25 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@drawable/background1"
+    android:screenOrientation="portrait"
     tools:context="com.example.user.suivezbouddhaandroid.MainActivity">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/selectRoom"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
+        android:textSize="16dp"
+        />
 
-        <ListView
-            android:layout_width="300dp"
-            android:layout_height="450dp"
-            android:background="@color/colorPrimary"
-            android:choiceMode="singleChoice"
-            android:layout_gravity="center"
-            android:id="@+id/listRoomsView" />
+    <ListView
+        android:layout_width="300dp"
+        android:layout_height="420dp"
+        android:background="@color/colorElements"
+        android:choiceMode="singleChoice"
+        android:layout_marginTop="20dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/listRoomsView" />
 
-        <!--Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Validate"
-            android:background="@drawable/button"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:onClick="validate"
-            android:id="@+id/button2" /-->
-    </LinearLayout>
 </RelativeLayout>
