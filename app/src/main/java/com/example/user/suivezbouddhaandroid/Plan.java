@@ -61,8 +61,11 @@ public class Plan extends AppCompatActivity implements Observer {
                 c.drawBitmap(bitmap, 0, 0, null);
                 Paint p = new Paint();
                 p.setColor(Color.rgb(204, 102, 119));
-                if (x!=0 && y !=0)
-                    c.drawCircle(x, y, 30, p);
+                if (x!=0 && y !=0){
+                    float scale = getResources().getDisplayMetrics().density;
+                    Log.d("scale:",Float.toString(scale));
+                    c.drawCircle(x*scale, y*scale, 35, p);
+                }
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
             }
         });
