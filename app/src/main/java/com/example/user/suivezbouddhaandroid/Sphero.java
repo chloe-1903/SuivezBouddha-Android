@@ -132,8 +132,17 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         goButton.setOnClickListener( this );
         stopButton.setOnClickListener( this );
+
         scanButton.setAlpha(.5f);
         scanButton.setClickable(false);
+
+        goButton.setAlpha(.5f);
+        goButton.setClickable(false);
+
+        stopButton.setAlpha(.5f);
+        stopButton.setClickable(false);
+
+        _calibrationButtonView.setAlpha(.5f);
     }
 
 
@@ -264,8 +273,17 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         switch( type ) {
             case Online: {
 
+                //On remet les bouton enable ICI
+                goButton.setAlpha(1f);
+                goButton.setClickable(true);
+
+                stopButton.setAlpha(1f);
+                stopButton.setClickable(true);
+
                 _calibrationView.setEnabled(true);
+                _calibrationButtonView.setAlpha(1f);
                 _calibrationButtonView.setEnabled(true);
+
 
                 //If robot uses Bluetooth LE, Developer Mode can be turned on.
                 //This turns off DOS protection. This generally isn't required.
@@ -295,6 +313,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         }
         switch( v.getId() ) {
             case R.id.go: {
+
+                //On disable le bouton
+                goButton.setAlpha(0.5f);
+                goButton.setClickable(false);
 
                 client = new Client();
                 client.addObserver(this);
