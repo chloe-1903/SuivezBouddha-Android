@@ -214,7 +214,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         if( mRobot != null ) {
             mRobot.disconnect();
             mRobot = null;
-        }a
+        }
         */
         Log.i("Sphero", "onStop");
         super.onStop();
@@ -240,6 +240,19 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
     @Override
     protected void onDestroy() {
+
+        Log.i("Sphero", "onDestroy");
+
+        if( DualStackDiscoveryAgent.getInstance().isDiscovering() ) {
+            DualStackDiscoveryAgent.getInstance().stopDiscovery();
+        }
+
+        //If a robot is connected to the device, disconnect it
+        if( mRobot != null ) {
+            mRobot.disconnect();
+            mRobot = null;
+        }
+
         super.onDestroy();
         DualStackDiscoveryAgent.getInstance().addRobotStateListener(null);
     }
@@ -320,7 +333,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     public void onClick(View v) {
                         Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
                         myIntent.putExtra("id", dataStep);
-                        startActivityForResult(myIntent, dataStep);
+                        startActivityForResult(myIntent, 1);
                     }
                 });
                 break;
