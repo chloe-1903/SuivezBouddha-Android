@@ -446,6 +446,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
             directions = jsonObject.getJSONArray("directions");
 
+            if(directions==null) return;
+
             macro = new MacroObject();
 
             for(int y = 0; y < directions.length(); y++) {
