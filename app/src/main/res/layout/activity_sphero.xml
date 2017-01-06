@@ -34,7 +34,7 @@
         app:background_color="@color/colorElements"
         app:calibration_circle_radius="50dp"
         app:calibration_center_x = "30dp"
-        app:calibration_center_y = "-80dp"/>
+        app:calibration_center_y = "-60dp"/>
 
 
     <!-- This needs to be the last element in your xml page if you want two finger calibration to work
@@ -55,10 +55,10 @@ anywhere in your application's page -->
         android:id="@+id/stop"
         android:background="@drawable/button"
         android:textColor="@color/white"
+        android:layout_marginTop="22dp"
         android:layout_below="@+id/go"
         android:layout_alignLeft="@+id/go"
-        android:layout_alignStart="@+id/go"
-        android:layout_marginTop="39dp" />
+        android:layout_alignStart="@+id/go" />
 
     <Button
         android:text="Scan"
@@ -67,9 +67,9 @@ anywhere in your application's page -->
         android:id="@+id/scan"
         android:background="@drawable/button"
         android:textColor="@color/white"
+        android:layout_marginTop="25dp"
         android:layout_below="@+id/stop"
-        android:layout_alignLeft="@+id/go"
-        android:layout_alignStart="@+id/go"
-        android:layout_marginTop="39dp" />
+        android:layout_alignLeft="@+id/stop"
+        android:layout_alignStart="@+id/stop" />
 
 </RelativeLayout>
