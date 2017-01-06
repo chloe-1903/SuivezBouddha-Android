@@ -18,6 +18,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -138,6 +139,8 @@ public class ScanActivity extends Activity implements SampleApplicationControl
             Manifest.permission.INTERNET
     };
 
+    private int idStep;
+
 
     // Called when the activity first starts or the user navigates back to an
     // activity.
@@ -171,8 +174,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
                 "droid");
 
-
-
+        idStep = getIntent().getIntExtra("id", 0);
     }
 
     // Process Single Tap event to trigger autofocus
@@ -306,7 +308,6 @@ public class ScanActivity extends Activity implements SampleApplicationControl
         }
     }
 
-
     // The final call you receive before your activity is destroyed.
     @Override
     protected void onDestroy()
@@ -341,7 +342,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
         mGlView = new SampleApplicationGLView(this);
         mGlView.init(translucent, depthSize, stencilSize);
 
-        mRenderer = new ImageTargetRenderer(this, vuforiaAppSession);
+        mRenderer = new ImageTargetRenderer(this, vuforiaAppSession, idStep);
         mRenderer.setTextures(mTextures);
         mGlView.setRenderer(mRenderer);
     }
@@ -849,5 +850,15 @@ public class ScanActivity extends Activity implements SampleApplicationControl
     private void showToast(String text)
     {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if( resultCode==1 ) {
+
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

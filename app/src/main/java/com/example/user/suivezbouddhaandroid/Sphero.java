@@ -61,7 +61,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private CalibrationImageButtonView _calibrationButtonView;
     private Client client;
     private JSONObject jsonObject;
-    private boolean data;
+    private boolean data = false;
+    private int dataStep = 0;
+    private Intent myIntent;
 
     private MacroObject macro;
 
@@ -112,7 +114,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         initViews();
 
         //SharedData sharedData = (SharedData) getApplicationContext();
-        data = SharedData.getData();
+        //data = SharedData.getData();
 
         Log.i("Sphero", String.valueOf(data));
 
@@ -297,43 +299,53 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 */
                 Log.i("Sphero", "Instructions globales : " + 0);
                 client.askDirection(String.valueOf(0));
+                //dataStep++;
 
-
-                //Bouton scan
-                scanButton.setClickable(true);
-                scanButton.setAlpha(1f);
-                scanButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                        startActivity(myIntent);
-                    }
-                });
-
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-
-                            while(!data) {
-                                //Log.i("Sphero", String.valueOf(data));
-                                data = SharedData.getData();
-                            }
-
-                            scanButton.setClickable(false);
-                            scanButton.setAlpha(0.5f);
-                            Log.i("Sphero", String.valueOf(data));
-
-                            Log.i("Sphero", "Instructions globales : " + 1);
-                            client.askDirection(String.valueOf(1));
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                //for(; dataStep < 5; dataStep++) {
+                    //Bouton scan
+                    scanButton.setClickable(true);
+                    scanButton.setAlpha(1f);
+                    scanButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                            myIntent.putExtra("id", 1);
+                            //startActivity(myIntent);
+                            startActivityForResult(myIntent, 1);
                         }
-                    }
-                };
-                thread.start();
+                    });
 
+                    /*
+                    Thread thread = new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                Log.i("AAA", "InThread");
+                                while (!data) {
+                                    //Log.i("Sphero", String.valueOf(data));
+                                    //data = SharedData.getData();
+                                    Log.i("AAA", String.valueOf(data));
+
+                                    Bundle extras = myIntent.getExtras();
+                                    data = Boolean.parseBoolean(extras.getString("data"));
+
+                                }
+
+                                scanButton.setClickable(false);
+                                scanButton.setAlpha(0.5f);
+                                Log.i("Sphero", String.valueOf(data));
+
+                                Log.i("Sphero", "Instructions globales : " + 1);
+                                client.askDirection(String.valueOf(1));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    thread.start();
+                    */
+                //}
                 break;
             }
             case R.id.stop: {
@@ -471,4 +483,24 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         */
         //mRobot.sendCommand(new RollCommand(90, 0.3f, RollCommand.State.GO));
     }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                // A contact was picked.  Here we will just display it
+                // to the user.
+                boolean dataBool = data.getBooleanExtra("data", false);
+
+                if(dataBool) {
+                    scanButton.setClickable(false);
+                    scanButton.setAlpha(0.5f);
+                    Log.i("Sphero", String.valueOf(data));
+
+                    Log.i("Sphero", "Instructions globales : " + 1);
+                    client.askDirection(String.valueOf(1));
+                }
+            }
+        }
+    }
+
 }

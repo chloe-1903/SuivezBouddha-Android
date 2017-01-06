@@ -9,6 +9,8 @@ countries.
 
 package com.example.user.suivezbouddhaandroid;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -68,15 +70,21 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
 
     private boolean qrCode1 = false;
     private boolean qrCode2 = false;
+
+    private boolean dataBool = false;
+    private int idStep;
+    private Intent returnIntent;
+
     
     
-    public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session)
+    public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session, int idStep)
     {
         mActivity = activity;
         vuforiaAppSession = session;
         // SampleAppRenderer used to encapsulate the use of RenderingPrimitives setting
         // the device mode AR/VR and stereo mode
         mSampleAppRenderer = new SampleAppRenderer(this, mActivity, Device.MODE.MODE_AR, false, 10f , 5000f);
+        this.idStep = idStep;
     }
     
     
@@ -216,18 +224,24 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             textureIndex = trackable.getName().equalsIgnoreCase("QRCode_2") ? 3
                     : textureIndex;
 
-            if(trackable.getName().equalsIgnoreCase("QRCode_1")) {
+            if(trackable.getName().equalsIgnoreCase("QRCode_1") && idStep == 1) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
                         if (!qrCode1)
                             Toast.makeText(mActivity, "QRCode #1 scanné", Toast.LENGTH_SHORT).show();
                         qrCode1 = true;
+                        returnIntent = new Intent();
+                        returnIntent.putExtra("data", dataBool=true);
+                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                        mActivity.finish();
+
                         //SharedData sharedData = (SharedData) mActivity.getApplicationContext();
-                        SharedData.setData(qrCode1);
+                        //SharedData.setData(qrCode1);
                     }
                 });
             }
 
+            //TODO  idStep == 2
             if(trackable.getName().equalsIgnoreCase("QRCode_2")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -328,5 +342,12 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
         mTextures = textures;
         
     }
-    
+
+    public void setIdStep(int idStep) {
+        this.idStep = idStep;
+    }
+
+    public boolean isDataBool() {
+        return dataBool;
+    }
 }
