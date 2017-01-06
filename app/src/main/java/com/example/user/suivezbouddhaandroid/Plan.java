@@ -26,6 +26,7 @@ public class Plan extends AppCompatActivity implements Observer {
     private float y;
     private Stack<String> qrCodesIds;
     private Button scanButton;
+    private int dataStep = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,8 @@ public class Plan extends AppCompatActivity implements Observer {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ScanActivity.class);
-                intent.putExtra("id", 1);
+                intent.putExtra("id", ++dataStep);
+
                 startActivityForResult(intent, 1);
             }
         });
@@ -83,11 +85,10 @@ public class Plan extends AppCompatActivity implements Observer {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                // A contact was picked.  Here we will just display it
-                // to the user.
                 int dat = data.getIntExtra("index", -1);
 
                 String temp = Integer.toString(dat);
+                Log.d("debug", temp);
 
                 if(dat != -1) {
                     client.askPosition(temp);

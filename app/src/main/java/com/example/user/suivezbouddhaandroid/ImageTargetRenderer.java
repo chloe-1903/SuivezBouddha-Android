@@ -234,7 +234,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
 
                         returnIntent = new Intent();
                         returnIntent.putExtra("data", dataBool = true);
-                        returnIntent.putExtra("index", i = 0);
+                        returnIntent.putExtra("index", i = 1);
                         mActivity.setResult(Activity.RESULT_OK,returnIntent);
                         mActivity.finish();
 
@@ -252,7 +252,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                         Log.d("cc", "cc");
                         returnIntent = new Intent();
                         returnIntent.putExtra("data", dataBool = true);
-                        returnIntent.putExtra("index", i = 1);
+                        returnIntent.putExtra("index", i = 2);
                         mActivity.setResult(Activity.RESULT_OK,returnIntent);
                         mActivity.finish();
                     }
