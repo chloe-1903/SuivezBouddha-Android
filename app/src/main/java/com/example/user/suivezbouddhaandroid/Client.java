@@ -21,7 +21,7 @@ import io.socket.emitter.Emitter;
 public class Client extends Observable {
     private Socket mSocket;
     private Boolean isConnected;
-    private final String serverAddress = "http://10.212.111.177:8080/";//http://192.168.1.95:8080/
+    private final String serverAddress = "http://10.212.109.188:8080/";//http://192.168.1.95:8080/
     private String message ;
     private float x;
     private float y;
@@ -35,6 +35,7 @@ public class Client extends Observable {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+        x=y=0;
         mSocket.on(Socket.EVENT_CONNECT,onConnect);
         mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -50,6 +51,9 @@ public class Client extends Observable {
         public void call(Object... args) {
             isConnected = true;
             Log.d("->","---------> Connect");
+            setChanged();
+            notifyObservers();
+            clearChanged();
         }
     };
 

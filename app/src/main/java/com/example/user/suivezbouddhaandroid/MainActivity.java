@@ -26,16 +26,18 @@ public class MainActivity extends AppCompatActivity implements Observer{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         client = new Client();
-        client.connect();
-        while (! client.isConnected());
         client.addObserver(this);
-        client.askAllRooms();
+        client.connect();
     }
 
     @Override
     public void update(Observable o, Object arg) {
+        Log.d("-->", "In update");
         rooms = client.getRooms();
-        if (rooms==null) return;
+        if (rooms==null){
+            client.askAllRooms();
+            return;
+        }
         final ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
         ArrayList<String> array = new ArrayList<>();
         for(int num : rooms.keySet()) {

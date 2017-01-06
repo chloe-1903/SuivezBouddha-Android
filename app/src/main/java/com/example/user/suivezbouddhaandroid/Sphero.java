@@ -416,6 +416,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         int direction;
         int delay;
 
+
+
         jsonObject = client.getDirections();
 
         try {
@@ -428,6 +430,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 Log.i("Sphero", "Instructions locales : "+ y);
 
                 instruction = directions.getJSONObject(y);
+
+                if (instruction==null) return;
 
                 speed = Float.parseFloat(instruction.getString("speed"));
                 direction = instruction.getInt("direction");

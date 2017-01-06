@@ -38,8 +38,6 @@ public class Plan extends AppCompatActivity implements Observer {
         client = new Client();
         client.addObserver(this);
         client.connect();
-        x=y=0;
-        drawPosition();
         scanButton = (Button)findViewById(R.id.scan_button);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
