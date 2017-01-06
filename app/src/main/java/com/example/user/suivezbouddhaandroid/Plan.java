@@ -29,12 +29,14 @@ public class Plan extends AppCompatActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
         qrCodesIds = new Stack<>();
-        for (int i=8; i>1 ; i--)
+        for (int i=8; i>0 ; i--)
             qrCodesIds.push(String.valueOf(i));
         client = new Client();
         client.addObserver(this);
         client.connect();
-        client.askDirection("0");
+        x=y=0;
+        drawPosition();
+        //client.askPosition("0");
     }
 
     public void drawPosition(){
@@ -47,7 +49,8 @@ public class Plan extends AppCompatActivity implements Observer {
                 c.drawBitmap(bitmap, 0, 0, null);
                 Paint p = new Paint();
                 p.setColor(Color.rgb(204, 102, 119));
-                c.drawCircle(x, y, 30, p);
+                if (x!=0 && y !=0)
+                    c.drawCircle(x, y, 30, p);
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
             }
         });

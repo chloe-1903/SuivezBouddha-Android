@@ -21,7 +21,7 @@ import io.socket.emitter.Emitter;
 public class Client extends Observable {
     private Socket mSocket;
     private Boolean isConnected;
-    private final String serverAddress = "http://10.212.109.188:8080/";//http://192.168.1.95:8080/
+    private final String serverAddress = "http://10.212.111.177:8080/";//http://192.168.1.95:8080/
     private String message ;
     private float x;
     private float y;

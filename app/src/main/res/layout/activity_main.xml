@@ -14,15 +14,15 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
 
         <ListView
             android:layout_width="300dp"
             android:layout_height="450dp"
-            android:layout_marginTop="50dp"
-            android:layout_gravity="center_horizontal"
             android:background="@color/colorPrimary"
             android:choiceMode="singleChoice"
+            android:layout_gravity="center"
             android:id="@+id/listRoomsView" />
 
         <!--Button
