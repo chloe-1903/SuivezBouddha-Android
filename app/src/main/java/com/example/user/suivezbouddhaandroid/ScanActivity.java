@@ -845,20 +845,4 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
         return result;
     }*/
-
-
-    private void showToast(String text)
-    {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if( resultCode==1 ) {
-
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }
