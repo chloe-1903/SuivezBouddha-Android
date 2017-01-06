@@ -297,7 +297,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 try {
                     mp.reset();
                     AssetFileDescriptor afd;
-                    afd = this.getAssets().openFd("bip.mp3");
+                    afd = this.getAssets().openFd("R2D2Scream.mp3");
                     mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
                     mp.prepare();
                     mp.start();
