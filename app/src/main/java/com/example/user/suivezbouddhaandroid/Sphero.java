@@ -285,67 +285,22 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 while(!client.isConnected());
 
-                //TODO 2 en static, ca pue !
-                /*
-                for(int i = 0; i < 2; i++) {
-                    Log.i("Sphero", "Instructions globales : " + i);
+                Log.i("Sphero", "Instructions globales : " + dataStep);
+                client.askDirection(String.valueOf(dataStep));
+                dataStep++;
+                Log.i("Sphero", "Etape : "+dataStep);
 
-                    client.askDirection(String.valueOf(i));
-
-                    //Bouton scan
-                    scanButton.setClickable(true);
-                    scanButton.setAlpha(1f);
-                }
-                */
-                Log.i("Sphero", "Instructions globales : " + 0);
-                client.askDirection(String.valueOf(0));
-                //dataStep++;
-
-                //for(; dataStep < 5; dataStep++) {
-                    //Bouton scan
-                    scanButton.setClickable(true);
-                    scanButton.setAlpha(1f);
-                    scanButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                            myIntent.putExtra("id", 1);
-                            //startActivity(myIntent);
-                            startActivityForResult(myIntent, 1);
-                        }
-                    });
-
-                    /*
-                    Thread thread = new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                Log.i("AAA", "InThread");
-                                while (!data) {
-                                    //Log.i("Sphero", String.valueOf(data));
-                                    //data = SharedData.getData();
-                                    Log.i("AAA", String.valueOf(data));
-
-                                    Bundle extras = myIntent.getExtras();
-                                    data = Boolean.parseBoolean(extras.getString("data"));
-
-                                }
-
-                                scanButton.setClickable(false);
-                                scanButton.setAlpha(0.5f);
-                                Log.i("Sphero", String.valueOf(data));
-
-                                Log.i("Sphero", "Instructions globales : " + 1);
-                                client.askDirection(String.valueOf(1));
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    thread.start();
-                    */
-                //}
+                //Bouton scan
+                scanButton.setClickable(true);
+                scanButton.setAlpha(1f);
+                scanButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                        myIntent.putExtra("id", dataStep);
+                        startActivityForResult(myIntent, dataStep);
+                    }
+                });
                 break;
             }
             case R.id.stop: {
@@ -460,28 +415,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             e.printStackTrace();
         }
 
-        /*
-        macro = new MacroObject();
-
-        macro.addCommand( new Roll(0.20f, 0, 1000));
-        macro.addCommand( new Delay(1000));
-
-        //Pause
-        macro.addCommand( new Roll(0.0f, 0, 500));
-        macro.addCommand( new Delay(500));
-
-        macro.addCommand( new Roll(0.20f, 180, 1000));
-        macro.addCommand( new Delay(1000));
-
-        //Stop
-        macro.addCommand( new Roll(0.0f, 0, 0));
-
-        //Send the macro to the robot and play
-        macro.setMode( MacroObject.MacroObjectMode.Normal );
-        macro.setRobot( mRobot.getRobot() );
-        macro.playMacro();
-        */
-        //mRobot.sendCommand(new RollCommand(90, 0.3f, RollCommand.State.GO));
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -492,14 +425,30 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 boolean dataBool = data.getBooleanExtra("data", false);
 
                 if(dataBool) {
+                    //On fait rouler la boule
                     scanButton.setClickable(false);
                     scanButton.setAlpha(0.5f);
-                    Log.i("Sphero", String.valueOf(data));
 
-                    Log.i("Sphero", "Instructions globales : " + 1);
-                    client.askDirection(String.valueOf(1));
+                    Log.i("Sphero", "Instructions globales : " + dataStep);
+                    client.askDirection(String.valueOf(dataStep));
+                    dataStep++;
+                    Log.i("Sphero", "Etape : "+dataStep);
+
+                    //On remet le scan disponible pour la prochaine étape
+                    scanButton.setClickable(true);
+                    scanButton.setAlpha(1f);
+                    scanButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                            myIntent.putExtra("id", dataStep);
+                            startActivityForResult(myIntent, 1);
+                        }
+                    });
+
                 }
             }
+
         }
     }
 
