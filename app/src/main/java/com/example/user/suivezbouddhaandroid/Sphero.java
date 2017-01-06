@@ -6,6 +6,7 @@ package com.example.user.suivezbouddhaandroid;
 
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,6 +35,8 @@ import com.orbotix.common.RobotChangedStateListener;
 import com.orbotix.le.RobotLE;
 import com.orbotix.macro.MacroObject;
 import com.orbotix.macro.cmd.Delay;
+import com.orbotix.macro.cmd.Fade;
+import com.orbotix.macro.cmd.RGB;
 import com.orbotix.macro.cmd.Roll;
 
 import org.json.JSONArray;
@@ -66,7 +70,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private JSONObject jsonObject;
     private boolean data = false;
     private int dataStep = 0;
-    private Intent myIntent;
+    private AssetManager assets;
 
     private MacroObject macro;
 
@@ -78,6 +82,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sphero);
+
+        assets = getAssets();
 
         /*
             Associate a listener for robot state changes with the DualStackDiscoveryAgent.
@@ -315,8 +321,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             case R.id.go: {
 
                 //On disable le bouton
-                goButton.setAlpha(0.5f);
-                goButton.setClickable(false);
+                //goButton.setAlpha(0.5f);
+                //goButton.setClickable(false);
 
                 client = new Client();
                 client.addObserver(this);
@@ -332,7 +338,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 try {
                     mp.reset();
                     AssetFileDescriptor afd;
-                    afd = this.getAssets().openFd("R2D2Scream.mp3");
+                    afd = assets.openFd("R2D2Scream.mp3");
                     mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
                     mp.prepare();
                     mp.start();
@@ -437,16 +443,17 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         float speed;
         int direction;
         int delay;
+        int delayTotal = 0;
 
-
+        boolean finish;
 
         jsonObject = client.getDirections();
+
+        if(jsonObject==null) return;
 
         try {
 
             directions = jsonObject.getJSONArray("directions");
-
-            if(directions==null) return;
 
             macro = new MacroObject();
 
@@ -460,6 +467,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 speed = Float.parseFloat(instruction.getString("speed"));
                 direction = instruction.getInt("direction");
                 delay = instruction.getInt("delay");
+                delayTotal += delay;
 
                 macro.addCommand( new Roll(speed, direction, delay));
                 macro.addCommand( new Delay(delay));
@@ -467,6 +475,15 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
             //Stop
             macro.addCommand( new Roll(0.0f, 0, 0));
+
+            //On regarde si on a finit le parcours
+            finish = jsonObject.getBoolean("finish");
+            if(finish) {
+                Log.d("Sphero", "finished ! ");
+                macro.addCommand( new RGB(0, 255, 0, 10000));
+                macro.addCommand( new Delay( 10000 ) );
+                finishSound(delayTotal);
+            }
 
             //Send the macro to the robot and play
             macro.setMode( MacroObject.MacroObjectMode.Normal );
@@ -515,4 +532,29 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         }
     }
 
+    public void finishSound(int delay) {
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if(mp.isPlaying())
+                {
+                    mp.stop();
+                }
+
+                try {
+                    mp.reset();
+                    AssetFileDescriptor afd;
+                    afd = assets.openFd("R2D2_finish.mp3");
+                    mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                    mp.prepare();
+                    mp.start();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, (delay + delay));
+    }
 }
