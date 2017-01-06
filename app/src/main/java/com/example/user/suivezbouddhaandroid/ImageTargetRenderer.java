@@ -72,6 +72,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
     private boolean qrCode2 = false;
 
     private boolean dataBool = false;
+    private int i = 0;
     private int idStep;
     private Intent returnIntent;
 
@@ -233,6 +234,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
 
                         returnIntent = new Intent();
                         returnIntent.putExtra("data", dataBool = true);
+                        returnIntent.putExtra("index", i = 0);
                         mActivity.setResult(Activity.RESULT_OK,returnIntent);
                         mActivity.finish();
 
@@ -240,15 +242,17 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                 });
             }
 
-            if(trackable.getName().equalsIgnoreCase("QRCode_2") && idStep == 2) {
+            if(trackable.getName().equalsIgnoreCase("QRCode_2")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
                         if (!qrCode2)
                             Toast.makeText(mActivity, "QRCode #2 scanné", Toast.LENGTH_SHORT).show();
                         qrCode2 = true;
 
+                        Log.d("cc", "cc");
                         returnIntent = new Intent();
                         returnIntent.putExtra("data", dataBool = true);
+                        returnIntent.putExtra("index", i = 1);
                         mActivity.setResult(Activity.RESULT_OK,returnIntent);
                         mActivity.finish();
                     }
