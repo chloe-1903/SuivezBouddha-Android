@@ -240,15 +240,17 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                 });
             }
 
-            //TODO  idStep == 2
-            if(trackable.getName().equalsIgnoreCase("QRCode_2")) {
+            if(trackable.getName().equalsIgnoreCase("QRCode_2") && idStep == 2) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
                         if (!qrCode2)
                             Toast.makeText(mActivity, "QRCode #2 scanné", Toast.LENGTH_SHORT).show();
                         qrCode2 = true;
 
-                        //TODO Intent
+                        returnIntent = new Intent();
+                        returnIntent.putExtra("data", dataBool = true);
+                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                        mActivity.finish();
                     }
                 });
             }
