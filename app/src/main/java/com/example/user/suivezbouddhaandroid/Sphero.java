@@ -4,7 +4,9 @@ package com.example.user.suivezbouddhaandroid;
  * Created by lucas on 16/12/16.
  */
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -21,6 +23,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -74,8 +77,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private boolean data = false;
     private int dataStep = 0;
     private AssetManager assets;
-
     private MacroObject macro;
+    private AlertDialog alertDialog;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
 
@@ -130,6 +133,28 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         //data = SharedData.getData();
 
         Log.i("Sphero", String.valueOf(data));
+
+        //TODO : Yolo popup ici
+        runOnUiThread(new Runnable() {
+            public void run() {
+
+                LayoutInflater factory = LayoutInflater.from(Sphero.this);
+                final View view = factory.inflate(R.layout.popup, null);
+
+                alertDialog = new AlertDialog.Builder(Sphero.this).create();
+                alertDialog.setTitle("Instructions");
+                alertDialog.setMessage("Blalbla faut faire comme si, comme ça pour faire marcher la sphero, bonne visite tout àa tout ça quoi normal. Je veux un long texte du coup je continue de taper des trucs au pif...");
+                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.setView(view);
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
 
     }
 
@@ -471,8 +496,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         _calibrationButtonView.setEnabled(false);
     }
 
-    boolean test = false;
-
     @Override
     public void update(Observable observable, Object o) {
 
@@ -532,6 +555,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
                         alertDialog.setTitle("Attention un escalier !");
                         alertDialog.setMessage("Veuillez s'il vous plaît monter les escaliers avec Bouddha. Scanner ensuite le prochaine QRCode.");
+                        alertDialog.setCanceledOnTouchOutside(false);
                         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
