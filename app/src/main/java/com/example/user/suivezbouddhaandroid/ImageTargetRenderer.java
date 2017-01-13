@@ -172,7 +172,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             "texSampler2D");
 
         if(!mModelIsLoaded) {
-            //mTeapot = new Teapot();
+            mTeapot = new Teapot();
 
             try {
                 mBuildingsModel = new SampleApplication3DModel();
@@ -222,10 +222,10 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                     : 1;
             textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2
                     : textureIndex;
-            textureIndex = trackable.getName().equalsIgnoreCase("QRCode_2") ? 3
+            textureIndex = trackable.getName().equalsIgnoreCase("QRCode_1") ? 3
                     : textureIndex;
 
-            if(trackable.getName().equalsIgnoreCase("QRCode_1") && idStep == 1) {
+            if(trackable.getName().equalsIgnoreCase("QRCode_1")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
                         if (!qrCode1)
@@ -249,10 +249,73 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                             Toast.makeText(mActivity, "QRCode #2 scanné", Toast.LENGTH_SHORT).show();
                         qrCode2 = true;
 
-                        Log.d("cc", "cc");
                         returnIntent = new Intent();
                         returnIntent.putExtra("data", dataBool = true);
                         returnIntent.putExtra("index", i = 2);
+                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                        mActivity.finish();
+                    }
+                });
+            }
+
+            if(trackable.getName().equalsIgnoreCase("QRCode_3")) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (!qrCode2)
+                            Toast.makeText(mActivity, "QRCode #3 scanné", Toast.LENGTH_SHORT).show();
+                        qrCode2 = true;
+
+                        returnIntent = new Intent();
+                        returnIntent.putExtra("data", dataBool = true);
+                        returnIntent.putExtra("index", i = 3);
+                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                        mActivity.finish();
+                    }
+                });
+            }
+
+            if(trackable.getName().equalsIgnoreCase("QRCode_4")) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (!qrCode2)
+                            Toast.makeText(mActivity, "QRCode #4 scanné", Toast.LENGTH_SHORT).show();
+                        qrCode2 = true;
+
+                        returnIntent = new Intent();
+                        returnIntent.putExtra("data", dataBool = true);
+                        returnIntent.putExtra("index", i = 4);
+                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                        mActivity.finish();
+                    }
+                });
+            }
+
+            if(trackable.getName().equalsIgnoreCase("QRCode_5")) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (!qrCode2)
+                            Toast.makeText(mActivity, "QRCode #5 scanné", Toast.LENGTH_SHORT).show();
+                        qrCode2 = true;
+
+                        returnIntent = new Intent();
+                        returnIntent.putExtra("data", dataBool = true);
+                        returnIntent.putExtra("index", i = 5);
+                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                        mActivity.finish();
+                    }
+                });
+            }
+
+            if(trackable.getName().equalsIgnoreCase("QRCode_6")) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (!qrCode2)
+                            Toast.makeText(mActivity, "QRCode #6 scanné", Toast.LENGTH_SHORT).show();
+                        qrCode2 = true;
+
+                        returnIntent = new Intent();
+                        returnIntent.putExtra("data", dataBool = true);
+                        returnIntent.putExtra("index", i = 6);
                         mActivity.setResult(Activity.RESULT_OK,returnIntent);
                         mActivity.finish();
                     }
@@ -277,7 +340,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             // activate the shader program and bind the vertex/normal/tex coords
             GLES20.glUseProgram(shaderProgramID);
 
-            /*if (!mActivity.isExtendedTrackingActive()) {
+            if (!mActivity.isExtendedTrackingActive()) {
                 GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
                         false, 0, mTeapot.getVertices());
                 GLES20.glVertexAttribPointer(textureCoordHandle, 2,
@@ -326,7 +389,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                 SampleUtils.checkGLError("Renderer DrawBuildings");
             }
 
-            SampleUtils.checkGLError("Render Frame");*/
+            SampleUtils.checkGLError("Render Frame");
 
         }
 
