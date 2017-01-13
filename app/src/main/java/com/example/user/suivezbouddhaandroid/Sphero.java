@@ -83,8 +83,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private MacroObject macro;
     private String popUpMessage;
     private Context context;
-     private Utils utils;
+    private Utils utils;
     private String roomSelectedId;
+    private int QRCodeID;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
 
@@ -346,7 +347,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                         //Start scan activity
                         Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                        myIntent.putExtra("id", dataStep);
+                        myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
+                        Log.i("AAA", String.valueOf(QRCodeID));
                         startActivityForResult(myIntent, 1);
                     }
                 });
@@ -493,6 +495,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 Log.i("Sphero", "Instructions locales : "+ y);
 
                 instruction = directions.getJSONObject(y);
+                QRCodeID =  jsonObject.getInt("qrcodeId");
 
                 if (instruction==null) return;
 
@@ -551,8 +554,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 // A contact was picked.  Here we will just display it
                 // to the user.
                 boolean dataBool = data.getBooleanExtra("data", false);
+                int QRCodeIDRevied = data.getIntExtra("index", -1);
 
-                if(dataBool) {
+                if(dataBool && QRCodeIDRevied == QRCodeID) {
                     //Run sphero
                     scanButton.setClickable(false);
                     scanButton.setAlpha(0.5f);
@@ -569,11 +573,13 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         @Override
                         public void onClick(View v) {
                             Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                            myIntent.putExtra("id", dataStep);
+                            myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
                             startActivityForResult(myIntent, 1);
                         }
                     });
 
+                } else {
+                    //TODO relancer scan !
                 }
             }
 
