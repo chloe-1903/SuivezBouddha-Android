@@ -103,7 +103,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         //Check the permission
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-
             int hasLocationPermission = checkSelfPermission( Manifest.permission.ACCESS_COARSE_LOCATION );
             if( hasLocationPermission != PackageManager.PERMISSION_GRANTED ) {
                 Log.e( "Sphero", "Location permission has not already been granted" );

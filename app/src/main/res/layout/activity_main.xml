@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:text="@string/selectRoom"
         android:layout_centerHorizontal="true"
+        android:id="@+id/mainTextView"
         android:textSize="16dp"
         />
 

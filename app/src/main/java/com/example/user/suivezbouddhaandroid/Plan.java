@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -27,6 +25,7 @@ public class Plan extends AppCompatActivity implements Observer {
     private Stack<String> qrCodesIds;
     private Button scanButton;
     private int dataStep = 0;
+    private int currentFloor = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,6 @@ public class Plan extends AppCompatActivity implements Observer {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ScanActivity.class);
                 intent.putExtra("id", ++dataStep);
-
                 startActivityForResult(intent, 1);
             }
         });
@@ -55,7 +53,16 @@ public class Plan extends AppCompatActivity implements Observer {
         runOnUiThread(new Runnable() {
             public void run() {
                 ImageView imageView = (ImageView) findViewById(R.id.img);
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.plan1nt);
+                imageView.setImageResource(0);
+                Bitmap bitmap;
+                Log.d("currentfloor", Integer.toString(currentFloor));
+                if (currentFloor == 1 )
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage0);
+                else if (currentFloor == 2)
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage0);
+                else
+                    return;
+
                 Bitmap tempBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
                 Canvas c = new Canvas(tempBitmap);
                 c.drawBitmap(bitmap, 0, 0, null);
@@ -63,18 +70,11 @@ public class Plan extends AppCompatActivity implements Observer {
                 p.setColor(Color.rgb(204, 102, 119));
                 if (x!=0 && y !=0){
                     float scale = getResources().getDisplayMetrics().density;
-                    Log.d("scale:",Float.toString(scale));
                     c.drawCircle(x*scale, y*scale, 35, p);
                 }
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
             }
         });
-    }
-
-    //Cette fonction sera appelée une fois un QRCode décodé
-    public void askDirection(View view){
-        if (!qrCodesIds.empty())
-            client.askPosition(qrCodesIds.pop());
     }
 
     @Override
@@ -92,6 +92,7 @@ public class Plan extends AppCompatActivity implements Observer {
                 Log.d("debug", temp);
 
                 if(dat != -1) {
+                    currentFloor = dat;
                     client.askPosition(temp);
                 }
             }

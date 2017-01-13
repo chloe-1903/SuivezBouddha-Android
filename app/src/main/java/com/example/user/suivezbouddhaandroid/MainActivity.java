@@ -1,16 +1,21 @@
 package com.example.user.suivezbouddhaandroid;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,12 +24,20 @@ import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements Observer{
     private Client client;
-    private HashMap<Integer, String> rooms;
+    private HashMap<String, String> rooms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() == null) {
+            TextView textView = (TextView) findViewById(R.id.mainTextView);
+            textView.setText("Veuillez vous connecter à internet.");
+            ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
+            listRoomsView.setVisibility(View.INVISIBLE);
+            textView.setTextSize(21);
+        }
         client = new Client();
         client.addObserver(this);
         client.connect();
@@ -32,15 +45,15 @@ public class MainActivity extends AppCompatActivity implements Observer{
 
     @Override
     public void update(Observable o, Object arg) {
-        Log.d("-->", "In update");
         rooms = client.getRooms();
-        if (rooms==null){
+        if (rooms==null){ //notify de onConnect
             client.askAllRooms();
             return;
         }
+        //notify de onNewPosition
         final ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
         ArrayList<String> array = new ArrayList<>();
-        for(int num : rooms.keySet()) {
+        for(String num : rooms.keySet()) {
             array.add(num + " - "+ rooms.get(num));
             Log.d("->"," ListItem " + num + " - "+ rooms.get(num) );
         }
@@ -60,5 +73,4 @@ public class MainActivity extends AppCompatActivity implements Observer{
         });
 
     }
-
 }

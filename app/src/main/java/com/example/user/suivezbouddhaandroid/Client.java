@@ -26,7 +26,7 @@ public class Client extends Observable {
     private float x;
     private float y;
     private JSONObject directions;
-    private HashMap<Integer, String> rooms;
+    private HashMap<String, String> rooms;
 
     public Client(){
         isConnected = false;
@@ -80,7 +80,6 @@ public class Client extends Observable {
             try {
                 JSONObject jsonAnswer = new JSONObject(args[0].toString());
                 String position = jsonAnswer.getString("position");
-                Log.d("->Position recu", jsonAnswer.getString("position"));
                 x = Float.valueOf(position.split("-")[0]);
                 y = Float.valueOf(position.split("-")[1]);
                 setChanged();
@@ -113,15 +112,19 @@ public class Client extends Observable {
         public void call(Object... args) {
             Log.d("->","---------> New message : "+ args[0]);
             message = args[0].toString();
-            JSONObject jsonAnswer = null;
+            JSONArray jsonAnswer = null;
             try {
-                jsonAnswer = new JSONObject(args[0].toString());
+                jsonAnswer = new JSONArray(args[0].toString());
                 rooms = new HashMap<>();
-                JSONArray jsonRooms = jsonAnswer.getJSONArray("rooms");
-                for (int i = 0; i< jsonRooms.length(); i++) {
-                    JSONObject jsonRoom = jsonRooms.getJSONObject(i);
-                    Log.d("->",jsonRoom.getInt("number")+ "-"+ jsonRoom.getString("activity"));
-                    rooms.put(jsonRoom.getInt("number"), jsonRoom.getString("activity"));
+                for (int i = 0; i< jsonAnswer.length(); i++) {
+                    JSONObject jsonFloor = jsonAnswer.getJSONObject(i);
+                    JSONArray jsonRooms = jsonFloor.getJSONArray("rooms");
+                    for (int k = 0; k< jsonRooms.length() ; k++)
+                    {
+                        JSONObject jsonRoom = jsonRooms.getJSONObject(k);
+                        Log.d("-> Salle :",jsonRoom.getString("number")+ "-"+ jsonRoom.getString("activity"));
+                        rooms.put(jsonRoom.getString("number"), jsonRoom.getString("activity"));
+                    }
                 }
                 setChanged();
                 notifyObservers();
@@ -195,7 +198,7 @@ public class Client extends Observable {
         return y;
     }
 
-    public HashMap<Integer, String> getRooms(){ return rooms;}
+    public HashMap<String, String> getRooms(){ return rooms;}
 
     public boolean isConnected() { return isConnected;}
 
