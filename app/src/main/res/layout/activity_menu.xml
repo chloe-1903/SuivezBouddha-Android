@@ -20,18 +20,18 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sphero"
+            android:text="Y aller en Sphero"
             android:id="@+id/buttonStart"
             android:onClick="startSphero"
             android:background="@drawable/button"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="150dp"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Plan"
+            android:text="Utiliser le plan"
             android:id="@+id/buttonPlan"
             android:onClick="startPlan"
             android:background="@drawable/button"

@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
@@ -24,6 +25,7 @@ import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements Observer{
     private Client client;
+    private Utils utils;
     private HashMap<String, String> rooms;
 
     @Override
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements Observer{
         client = new Client();
         client.addObserver(this);
         client.connect();
+
+        utils = new Utils();
     }
 
     @Override
@@ -65,6 +69,14 @@ public class MainActivity extends AppCompatActivity implements Observer{
                 listRoomsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        //Write the room selected on the file
+                        try {
+                            utils.writeToFile(String.valueOf(i), "RoomSelected");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                         Intent myIntent = new Intent(getApplicationContext(), Menu.class);
                         startActivity(myIntent);
                     }

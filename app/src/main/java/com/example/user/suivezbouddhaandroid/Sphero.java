@@ -83,6 +83,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private MacroObject macro;
     private String popUpMessage;
     private Context context;
+     private Utils utils;
+    private String roomSelectedId;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
 
@@ -95,6 +97,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         assets = getAssets();
         context = this.getApplicationContext();
+        utils = new Utils();
 
         /*
             Associate a listener for robot state changes with the DualStackDiscoveryAgent.
@@ -134,6 +137,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         //Init buttons
         initViews();
+
+        roomSelectedId = utils.readFile("RoomSelected");
+        String[] roomSelectedIdTab = roomSelectedId.split("");
+        roomSelectedId = roomSelectedIdTab[1];
     }
 
     /**
@@ -323,29 +330,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 //Play a sound
                 playSond(0, "R2D2Scream.mp3");
-                /*
-                if(mp.isPlaying())
-                {
-                    mp.stop();
-                }
-
-                try {
-                    mp.reset();
-                    AssetFileDescriptor afd;
-                    afd = assets.openFd("R2D2Scream.mp3");
-                    mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
-                    mp.prepare();
-                    mp.start();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                */
 
                 //Ask for a direction
                 Log.i("Sphero", "Instructions globales : " + dataStep);
-                client.askDirection(String.valueOf(dataStep));
+                client.askDirection(roomSelectedId, String.valueOf(dataStep));
                 dataStep++;
                 Log.i("Sphero", "Etape : "+dataStep);
 
@@ -570,7 +558,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     scanButton.setAlpha(0.5f);
 
                     Log.i("Sphero", "Instructions globales : " + dataStep);
-                    client.askDirection(String.valueOf(dataStep));
+                    client.askDirection(roomSelectedId, String.valueOf(dataStep));
                     dataStep++;
                     Log.i("Sphero", "Etape : "+dataStep);
 

@@ -158,12 +158,12 @@ public class Client extends Observable {
 
     }
 
-    public void askDirection(String id)
+    public void askDirection(String idRomm, String id)
     {
         if (isConnected)
         {
             Log.d("->","---------> Asking direction for id : "+ id);
-            mSocket.emit("askDirection", id);
+            mSocket.emit("askDirection", idRomm, id);
         }
     }
 
