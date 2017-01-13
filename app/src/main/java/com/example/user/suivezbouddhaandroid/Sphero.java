@@ -22,6 +22,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -81,6 +82,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private AssetManager assets;
     private MacroObject macro;
     private String popUpMessage;
+    private Context context;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
 
@@ -92,6 +94,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         setContentView(R.layout.activity_sphero);
 
         assets = getAssets();
+        context = this.getApplicationContext();
 
         /*
             Associate a listener for robot state changes with the DualStackDiscoveryAgent.
@@ -274,6 +277,19 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 _calibrationButtonView.setEnabled(false);
                 break;
             }
+        }
+    }
+
+    /**
+     * Add to the macro a blink
+     */
+    public void blinkStairs(MacroObject macro, int nbBlink) {
+
+        for(int i = 0; i < nbBlink; i++){
+            macro.addCommand(new RGB(237, 127, 16, 1000));
+            macro.addCommand(new Delay(1000));
+            macro.addCommand(new RGB(0, 0, 0, 500));
+            macro.addCommand(new Delay(500));
         }
     }
 
@@ -514,18 +530,20 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 endPopup(delayTotal);
             }
 
-            //Send the macro to the robot and play
-            macro.setMode( MacroObject.MacroObjectMode.Normal );
-            macro.setRobot( mRobot.getRobot() );
-            macro.playMacro();
-
             //Check if we got stairs this time
             stairs = jsonObject.getString("stairs");
             if(stairs.equals("up")) {
                 stairsPopup(delayTotal, "up");
+                blinkStairs(macro, 5);
             } else if (stairs.equals("down")) {
                 stairsPopup(delayTotal, "down");
+                blinkStairs(macro, 5);
             }
+
+            //Send the macro to the robot and play
+            macro.setMode( MacroObject.MacroObjectMode.Normal );
+            macro.setRobot( mRobot.getRobot() );
+            macro.playMacro();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -613,17 +631,17 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     //===============================================
 
     /**
-     * The popup displayed when we got stairs
+     * The popup displayed when we got stairs + vribration
      * @param delay
      * @param direction
      */
     public void stairsPopup(int delay, String direction) {
 
         if(direction.equals("up")) {
-            popUpMessage = "Veuillez s'il vous plaît monter les escaliers avec Bouddha et repositionnez le sur la pastille rouge. Scanner ensuite le prochain QRCode.";
+            popUpMessage = "Veuillez s'il vous plaît monter les escaliers avec Bouddha et le repositionner  sur la pastille rouge. Scanner ensuite le prochain QRCode.";
         }
         else if (direction.equals("down")) {
-            popUpMessage = "Veuillez s'il vous plaît descendre les escaliers avec Bouddha et repositionnez le sur la pastille rouge. Scanner ensuite le prochain QRCode.";
+            popUpMessage = "Veuillez s'il vous plaît descendre les escaliers avec Bouddha et le repositionner  sur la pastille rouge. Scanner ensuite le prochain QRCode.";
         } else {
             popUpMessage = "Error !";
         }
@@ -662,6 +680,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 //Center the text
                 TextView messageText = (TextView)alertDialog.findViewById(android.R.id.message);
                 messageText.setGravity(Gravity.CENTER);
+
+                //Vibration
+                Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(500);
             }
         }, (delay + delay));
     }
