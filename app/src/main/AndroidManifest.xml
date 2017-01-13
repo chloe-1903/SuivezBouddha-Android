@@ -31,23 +31,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Menu" />
-        <activity android:name=".Sphero" />
-        <activity android:name=".Plan" />
-        <activity android:name=".BeaconActivity" />
+        <activity android:name=".Menu"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Sphero"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Plan"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".BeaconActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ScanActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".TestServeur" />
+        <activity android:name=".TestServeur"
+            android:screenOrientation="portrait"/>
 
     </application>
 
