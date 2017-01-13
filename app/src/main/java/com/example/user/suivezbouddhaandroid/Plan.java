@@ -10,9 +10,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -22,7 +24,6 @@ public class Plan extends AppCompatActivity implements Observer {
     private Client client;
     private float x;
     private float y;
-    private Stack<String> qrCodesIds;
     private Button scanButton;
     private int dataStep = 0;
     private int currentFloor = 1;
@@ -31,9 +32,6 @@ public class Plan extends AppCompatActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
-        qrCodesIds = new Stack<>();
-        for (int i=8; i>0 ; i--)
-            qrCodesIds.push(String.valueOf(i));
         client = new Client();
         client.addObserver(this);
         client.connect();
@@ -55,14 +53,12 @@ public class Plan extends AppCompatActivity implements Observer {
                 ImageView imageView = (ImageView) findViewById(R.id.img);
                 imageView.setImageResource(0);
                 Bitmap bitmap;
-                Log.d("currentfloor", Integer.toString(currentFloor));
                 if (currentFloor == 1 )
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage0);
                 else if (currentFloor == 2)
-                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage0);
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage1);
                 else
                     return;
-
                 Bitmap tempBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
                 Canvas c = new Canvas(tempBitmap);
                 c.drawBitmap(bitmap, 0, 0, null);
@@ -73,6 +69,7 @@ public class Plan extends AppCompatActivity implements Observer {
                     c.drawCircle(x*scale, y*scale, 35, p);
                 }
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+
             }
         });
     }
