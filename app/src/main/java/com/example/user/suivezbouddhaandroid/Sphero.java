@@ -229,7 +229,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 Toast.makeText(getApplicationContext(), "Recherche...", Toast.LENGTH_LONG).show();
                 Log.d("Sphero", "Recherche");
             } catch (DiscoveryException e) {
-                Toast.makeText(getApplicationContext(), "Allumez le bluetooth !", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Veuillez allumer le bluetooth", Toast.LENGTH_LONG).show();
                 Log.e("Sphero", "DiscoveryException: " + e.getMessage());
             }
         }
@@ -579,7 +579,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     });
 
                 } else {
-                    //TODO relancer scan !
+                    Toast.makeText(getApplicationContext(), "Vous n'avez pas scanner le bon QRCode pour le parcours sélectionné", Toast.LENGTH_LONG).show();
                 }
             }
 
