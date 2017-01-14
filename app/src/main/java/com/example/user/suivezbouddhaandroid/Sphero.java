@@ -139,7 +139,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         //Init buttons
         initViews();
 
-        roomSelectedId = utils.readFile("RoomSelected");
+        roomSelectedId = utils.readFile("RoomSelected.txt");
         String[] roomSelectedIdTab = roomSelectedId.split("");
         roomSelectedId = roomSelectedIdTab[1];
     }
@@ -319,8 +319,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 //On disable le bouton
                 //TODO
-                //goButton.setAlpha(0.5f);
-                //goButton.setClickable(false);
+                goButton.setAlpha(0.5f);
+                goButton.setClickable(false);
 
                 //Connection to the server
                 client = new Client();
@@ -347,7 +347,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                         //Start scan activity
                         Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                        myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
+                        //myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
                         Log.i("AAA", String.valueOf(QRCodeID));
                         startActivityForResult(myIntent, 1);
                     }
@@ -573,7 +573,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         @Override
                         public void onClick(View v) {
                             Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                            myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
+                            //myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
                             startActivityForResult(myIntent, 1);
                         }
                     });

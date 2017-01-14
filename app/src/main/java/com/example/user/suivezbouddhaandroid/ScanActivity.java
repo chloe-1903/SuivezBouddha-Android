@@ -139,7 +139,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
             Manifest.permission.INTERNET
     };
 
-    private int idStep;
+    //private int idStep;
 
 
     // Called when the activity first starts or the user navigates back to an
@@ -174,7 +174,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
                 "droid");
 
-        idStep = getIntent().getIntExtra("id", 0);
+        //idStep = getIntent().getIntExtra("id", 0);
     }
 
     // Process Single Tap event to trigger autofocus
@@ -342,7 +342,8 @@ public class ScanActivity extends Activity implements SampleApplicationControl
         mGlView = new SampleApplicationGLView(this);
         mGlView.init(translucent, depthSize, stencilSize);
 
-        mRenderer = new ImageTargetRenderer(this, vuforiaAppSession, idStep);
+        //mRenderer = new ImageTargetRenderer(this, vuforiaAppSession, idStep);
+        mRenderer = new ImageTargetRenderer(this, vuforiaAppSession);
         mRenderer.setTextures(mTextures);
         mGlView.setRenderer(mRenderer);
     }

@@ -73,19 +73,20 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
 
     private boolean dataBool = false;
     private int i = 0;
-    private int idStep;
+    //private int idStep;
     private Intent returnIntent;
 
     
     
-    public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session, int idStep)
+    //public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session, int idStep)
+    public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session)
     {
         mActivity = activity;
         vuforiaAppSession = session;
         // SampleAppRenderer used to encapsulate the use of RenderingPrimitives setting
         // the device mode AR/VR and stereo mode
         mSampleAppRenderer = new SampleAppRenderer(this, mActivity, Device.MODE.MODE_AR, false, 10f , 5000f);
-        this.idStep = idStep;
+        //this.idStep = idStep;
     }
     
     
@@ -411,6 +412,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
         
     }
 
+    /*
     public void setIdStep(int idStep) {
         this.idStep = idStep;
     }
@@ -418,4 +420,5 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
     public boolean isDataBool() {
         return dataBool;
     }
+     */
 }

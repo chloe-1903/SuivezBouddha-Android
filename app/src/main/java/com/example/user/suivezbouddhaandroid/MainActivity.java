@@ -1,9 +1,12 @@
 package com.example.user.suivezbouddhaandroid;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.os.Build;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,10 +31,24 @@ public class MainActivity extends AppCompatActivity implements Observer{
     private Utils utils;
     private HashMap<String, String> rooms;
 
+    private static final String[] PERMS = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(PERMS, 15);
+
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm.getActiveNetworkInfo() == null) {
             TextView textView = (TextView) findViewById(R.id.mainTextView);
@@ -72,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
 
                         //Write the room selected on the file
                         try {
-                            utils.writeToFile(String.valueOf(i), "RoomSelected");
+                            utils.writeToFile(String.valueOf(i), "RoomSelected.txt");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
