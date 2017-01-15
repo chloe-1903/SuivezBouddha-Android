@@ -16,6 +16,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Stack;
@@ -25,7 +28,6 @@ public class Plan extends AppCompatActivity implements Observer {
     private float x;
     private float y;
     private Button scanButton;
-    private int dataStep = 0;
     private int currentFloor = 1;
 
     @Override
@@ -40,7 +42,6 @@ public class Plan extends AppCompatActivity implements Observer {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ScanActivity.class);
-                intent.putExtra("id", ++dataStep);
                 startActivityForResult(intent, 1);
             }
         });
@@ -69,15 +70,24 @@ public class Plan extends AppCompatActivity implements Observer {
                     c.drawCircle(x*scale, y*scale, 35, p);
                 }
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
-
             }
         });
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        x= client.getX(); y=client.getY();
-        drawPosition();
+        JSONObject jsonAnswer = client.getPosition();
+        String position = null;
+        try {
+            position = jsonAnswer.getString("position");
+            x = Float.valueOf(position.split("-")[0]);
+            y = Float.valueOf(position.split("-")[1]);
+            currentFloor = Integer.valueOf(jsonAnswer.getString("floor"));
+            drawPosition();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -89,7 +99,6 @@ public class Plan extends AppCompatActivity implements Observer {
                 Log.d("debug", temp);
 
                 if(dat != -1) {
-                    currentFloor = dat;
                     client.askPosition(temp);
                 }
             }

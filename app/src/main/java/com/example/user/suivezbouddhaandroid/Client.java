@@ -21,10 +21,9 @@ import io.socket.emitter.Emitter;
 public class Client extends Observable {
     private Socket mSocket;
     private Boolean isConnected;
-    private final String serverAddress = "http://10.212.111.177:8080/";//http://10.212.109.188:8080/
+    private final String serverAddress = "http://192.168.1.95:8080/";//http://10.212.109.188:8080/
     private String message ;
-    private float x;
-    private float y;
+    private JSONObject position;
     private JSONObject directions;
     private HashMap<String, String> rooms;
 
@@ -35,7 +34,14 @@ public class Client extends Observable {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        x=y=0;
+        position = new JSONObject();
+        try {
+            position.put("id", new Integer(0));
+            position.put("position", "0-0");
+            position.put("floor", new Integer(0));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         mSocket.on(Socket.EVENT_CONNECT,onConnect);
         mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -78,10 +84,7 @@ public class Client extends Observable {
         public void call(Object... args) {
             Log.d("->", "---------> New position : " + args[0]);
             try {
-                JSONObject jsonAnswer = new JSONObject(args[0].toString());
-                String position = jsonAnswer.getString("position");
-                x = Float.valueOf(position.split("-")[0]);
-                y = Float.valueOf(position.split("-")[1]);
+                position = new JSONObject(args[0].toString());
                 setChanged();
                 notifyObservers();
                 clearChanged();
@@ -190,19 +193,15 @@ public class Client extends Observable {
         mSocket.connect();
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
     public HashMap<String, String> getRooms(){ return rooms;}
 
     public boolean isConnected() { return isConnected;}
 
     public JSONObject getDirections() {
         return directions;
+    }
+
+    public JSONObject getPosition() {
+        return position;
     }
 }
