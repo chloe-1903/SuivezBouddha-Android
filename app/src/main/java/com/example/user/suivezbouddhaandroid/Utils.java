@@ -26,7 +26,7 @@ public class Utils {
             FileOutputStream stream = new FileOutputStream(file);
             stream.write(data.getBytes());
             stream.close();
-            Log.i("Utils", "Written " + file);
+            Log.i("Utils", "Written : " + file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -51,7 +51,7 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.i("Utils", "Read" + text.toString());
+        Log.i("Utils", "Read : " + text.toString());
 
         return text.toString();
     }

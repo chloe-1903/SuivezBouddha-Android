@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
     private Client client;
     private Utils utils;
     private HashMap<String, String> rooms;
+    private ArrayList<String> array;
 
     private static final String[] PERMS = {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
         }
         //notify de onNewPosition
         final ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
-        ArrayList<String> array = new ArrayList<>();
+        array = new ArrayList<>();
         for(String num : rooms.keySet()) {
             array.add(num + " - "+ rooms.get(num));
             Log.d("->"," ListItem " + num + " - "+ rooms.get(num) );
@@ -88,8 +89,10 @@ public class MainActivity extends AppCompatActivity implements Observer{
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                         //Write the room selected on the file
+                        String[] roomName = array.get(i).split(" - ");
+
                         try {
-                            utils.writeToFile(String.valueOf(i), "RoomSelected.txt");
+                            utils.writeToFile(roomName[0]+";", "RoomSelected.txt");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
