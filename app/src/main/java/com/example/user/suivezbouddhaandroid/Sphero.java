@@ -579,7 +579,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     });
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Vous n'avez pas scanner le bon QRCode pour le parcours sélectionné", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Vous n'avez pas scanné le bon QRCode pour le parcours sélectionné. Etes-vous perdu ? ", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -632,12 +632,12 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     public void stairsPopup(int delay, String direction) {
 
         if(direction.equals("up")) {
-            popUpMessage = "Veuillez s'il vous plaît monter les escaliers avec Bouddha et le repositionner  sur la pastille rouge. Scanner ensuite le prochain QRCode.";
+            popUpMessage = "Veuillez s'il-vous-plaît monter les escaliers avec Bouddha et le repositionner sur la pastille rouge. Scannez ensuite le prochain QRCode.";
         }
         else if (direction.equals("down")) {
-            popUpMessage = "Veuillez s'il vous plaît descendre les escaliers avec Bouddha et le repositionner  sur la pastille rouge. Scanner ensuite le prochain QRCode.";
+            popUpMessage = "Veuillez s'il-vous-plaît descendre les escaliers avec Bouddha et le repositionner sur la pastille rouge. Scannee ensuite le prochain QRCode.";
         } else {
-            popUpMessage = "Error !";
+            popUpMessage = "Erreur !";
         }
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
@@ -720,10 +720,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if(id == 0) {
-                                    String message = "Une fois la boule positionnée et connectée, mettez-vous derrière la sphère et utiliser le bouton rond pour calibrer Bouddha comme sur l'image.";
+                                    String message = "Une fois la boule positionnée et connectée, mettez-vous derrière la sphère et utilisez le bouton rond pour calibrer Bouddha comme sur l'image.";
                                     instructionsPopup(1, "Instructions", message, R.drawable.calibration, 166, 158);
                                 } else if ( id == 1) {
-                                    String message = "Une fois que Bouddha sera bien calibré, vous pourrez appuyer sur le bouton \"GO\" et vous commencerez à suivre la boule ! En cas de problèmes, vous pouvez toujours appuyer sur le bouton \"STOP\" pour arrêter la sphère.";
+                                    String message = "Une fois que Bouddha sera bien calibré, vous pourrez appuyer sur le bouton \"GO\" et vous commencerez à suivre la boule ! En cas de problème, vous pouvez toujours appuyer sur le bouton \"STOP\" pour arrêter la sphère.";
                                     instructionsPopup(2, "Instructions", message, R.drawable.menu, 166, 318);
                                 } else if ( id == 2) {
                                     String message = "Lorsque celle-ci s'arrêtera, il vous faudra scanner le QRCode le plus proche à l'aide du bouton \"SCAN\"";
