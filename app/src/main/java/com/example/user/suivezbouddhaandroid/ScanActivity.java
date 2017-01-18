@@ -227,6 +227,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
                 getAssets()));
         mTextures.add(Texture.loadTextureFromApk("ImageTargets/Buildings.jpeg",
                 getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("arrow.png", getAssets()));
     }
 
 

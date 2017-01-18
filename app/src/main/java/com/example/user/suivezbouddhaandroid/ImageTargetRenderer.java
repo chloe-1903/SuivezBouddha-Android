@@ -60,13 +60,13 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
     
     private Teapot mTeapot;
     
-    private float kBuildingScale = 12.0f;
+    private float kBuildingScale = 2.0f;
     private SampleApplication3DModel mBuildingsModel;
 
     private boolean mIsActive = false;
     private boolean mModelIsLoaded = false;
     
-    private static final float OBJECT_SCALE_FLOAT = 3.0f;
+    private static final float OBJECT_SCALE_FLOAT = 300.0f;
 
     private boolean qrCode1 = false;
     private boolean qrCode2 = false;
@@ -223,7 +223,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                     : 1;
             textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2
                     : textureIndex;
-            textureIndex = trackable.getName().equalsIgnoreCase("QRCode_1") ? 3
+            textureIndex = trackable.getName().equalsIgnoreCase("QRCode_1") ? 4
                     : textureIndex;
 
             if(trackable.getName().equalsIgnoreCase("QRCode_1")) {
@@ -361,9 +361,11 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                         modelViewProjection, 0);
 
                 // finally draw the teapot
-                GLES20.glDrawElements(GLES20.GL_TRIANGLES,
+                /*GLES20.glDrawElements(GLES20.GL_TRIANGLES,
                         mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
-                        mTeapot.getIndices());
+                        mTeapot.getIndices());*/
+                // and without indices...
+                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mTeapot.getNumObjectVertex());
 
                 // disable the enabled arrays
                 GLES20.glDisableVertexAttribArray(vertexHandle);
