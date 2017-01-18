@@ -487,6 +487,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         //read the json
         try {
             directions = jsonObject.getJSONArray("directions");
+            QRCodeID =  jsonObject.getInt("qrcodeId");
 
             macro = new MacroObject();
 
@@ -494,7 +495,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 Log.i("Sphero", "Instructions locales : "+ y);
 
                 instruction = directions.getJSONObject(y);
-                QRCodeID =  jsonObject.getInt("qrcodeId");
 
                 if (instruction==null) return;
 
