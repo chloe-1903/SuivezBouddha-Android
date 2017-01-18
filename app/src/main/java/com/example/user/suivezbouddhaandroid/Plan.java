@@ -54,12 +54,10 @@ public class Plan extends AppCompatActivity implements Observer {
                 ImageView imageView = (ImageView) findViewById(R.id.img);
                 imageView.setImageResource(0);
                 Bitmap bitmap;
-                if (currentFloor == 1 )
-                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage0);
-                else if (currentFloor == 2)
+                if (currentFloor == 2 )
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage1);
                 else
-                    return;
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage0);
                 Bitmap tempBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
                 Canvas c = new Canvas(tempBitmap);
                 c.drawBitmap(bitmap, 0, 0, null);
