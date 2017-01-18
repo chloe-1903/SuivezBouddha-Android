@@ -140,8 +140,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         initViews();
 
         roomSelectedId = utils.readFile("RoomSelected.txt");
-        String[] roomSelectedIdTab = roomSelectedId.split("");
-        roomSelectedId = roomSelectedIdTab[1];
+        String[] roomSelectedIdTab = roomSelectedId.split(";");
+        roomSelectedId = roomSelectedIdTab[0];
     }
 
     /**
@@ -348,7 +348,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         //Start scan activity
                         Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
                         //myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
-                        Log.i("AAA", String.valueOf(QRCodeID));
                         startActivityForResult(myIntent, 1);
                     }
                 });
@@ -731,7 +730,12 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                                 }
                             }
                         });
-                alertDialog.show();
+                try {
+                    alertDialog.show();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 //Center the text
                 TextView messageText = (TextView)alertDialog.findViewById(android.R.id.message);
