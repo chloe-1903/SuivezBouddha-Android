@@ -289,6 +289,26 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     }
 
     /**
+     * Disconnect the Sphero
+     */
+    public void disconnectRobot() {
+
+        //TODO disables buttons
+        Log.d("Sphero", "disconnectRobot");
+
+        if( DualStackDiscoveryAgent.getInstance().isDiscovering() ) {
+            DualStackDiscoveryAgent.getInstance().stopDiscovery();
+        }
+
+        //If a robot is connected to the device, disconnect it
+        if( mRobot != null ) {
+            mRobot.disconnect();
+            mRobot = null;
+        }
+
+    }
+
+    /**
      * Add to the macro a blink
      */
     public void blinkStairs(MacroObject macro, int nbBlink) {
@@ -347,7 +367,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                         //Start scan activity
                         Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                        //myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
+                        //myIntent.putExtra("id", dataStep);
                         startActivityForResult(myIntent, 1);
                     }
                 });
@@ -547,7 +567,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      * @param resultCode
      * @param data
      */
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { //TODO Lock scan while sphero move
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 // A contact was picked.  Here we will just display it
@@ -572,7 +592,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         @Override
                         public void onClick(View v) {
                             Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                            //myIntent.putExtra("id", dataStep); //TODO je crois que c'est useless ca now
+                            //myIntent.putExtra("id", dataStep);
                             startActivityForResult(myIntent, 1);
                         }
                     });
@@ -692,7 +712,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      * @param width
      */
     public void instructionsPopup(final int id, final String title, final String text, final int imageInt, final int height, final int width) {
-
+        //TODO Fix lags
         runOnUiThread(new Runnable() {
             public void run() {
 
@@ -768,6 +788,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 //Center the text
                 TextView messageText = (TextView)alertDialog.findViewById(android.R.id.message);
                 messageText.setGravity(Gravity.CENTER);
+
+                //ici
+                disconnectRobot();
+
             }
         }, (delay + delay));
     }
