@@ -19,6 +19,8 @@ import android.widget.RelativeLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Stack;
@@ -29,14 +31,28 @@ public class Plan extends AppCompatActivity implements Observer {
     private float y;
     private Button scanButton;
     private int currentFloor = 1;
+    private String roomSelectedId;
+    private Integer[] roomPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
+
+        //Création du client
         client = new Client();
         client.addObserver(this);
         client.connect();
+
+        //Initialisation de l'ID de la salle où aller
+        String line = Utils.readFile("RoomSelected.txt");
+        String[] roomSelectedIdTab = line.split(";");
+        roomSelectedId = roomSelectedIdTab[0];
+        HashMap<String, Integer[]> roomPositions = Utils.setRoomsPosition();
+        roomPosition = roomPositions.get(roomSelectedId);
+
+
+        //Création du listener du scan
         scanButton = (Button)findViewById(R.id.scan_button);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +83,10 @@ public class Plan extends AppCompatActivity implements Observer {
                     float scale = getResources().getDisplayMetrics().density;
                     c.drawCircle(x*scale, y*scale, 35, p);
                 }
+                Paint paintArrival = new Paint();
+                paintArrival.setColor(Color.rgb(119, 170, 119));
+                c.drawCircle(roomPosition[0], roomPosition[1], 100, paintArrival);
+                Log.d("salle selectionnée ", ""+roomSelectedId);
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
             }
         });

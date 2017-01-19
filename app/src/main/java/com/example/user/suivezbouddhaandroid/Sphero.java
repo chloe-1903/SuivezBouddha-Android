@@ -86,7 +86,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private MacroObject macro;
     private String popUpMessage;
     private Context context;
-    private Utils utils;
     private String roomSelectedId;
     private int QRCodeID;
     private boolean macroStopped = false;
@@ -103,7 +102,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         assets = getAssets();
         context = this.getApplicationContext();
-        utils = new Utils();
 
         /*
             Associate a listener for robot state changes with the DualStackDiscoveryAgent.
@@ -144,7 +142,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         //Init buttons
         initViews();
 
-        roomSelectedId = utils.readFile("RoomSelected.txt");
+        roomSelectedId = Utils.readFile("RoomSelected.txt");
         String[] roomSelectedIdTab = roomSelectedId.split(";");
         roomSelectedId = roomSelectedIdTab[0];
     }

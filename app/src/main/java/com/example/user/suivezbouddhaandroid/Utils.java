@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by lucas on 13/01/17.
@@ -17,7 +19,7 @@ import java.io.IOException;
 
 public class Utils {
 
-    public void writeToFile(String data, String fileName) throws IOException {
+    public static void writeToFile(String data, String fileName) throws IOException {
 
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
         File file = new File(path, fileName);
@@ -33,7 +35,7 @@ public class Utils {
     }
 
 
-    public String readFile(String FileName) {
+    public static String readFile(String FileName) {
 
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
         final File file = new File(path, FileName);
@@ -54,5 +56,18 @@ public class Utils {
         Log.i("Utils", "Read : " + text.toString());
 
         return text.toString();
+    }
+
+    public static HashMap<String, Integer[]> setRoomsPosition(){
+        HashMap<String, Integer[]> res = new HashMap<>();
+        Integer[] p1 = {650,500};
+        res.put("Cafeteria", p1);
+        Integer[] p2 = {1850,600};
+        res.put("Bibliotheque", p2);
+        Integer[] p3 = {1800,2600};
+        res.put("Amphi Ouest", p3);
+        Integer[] p4 = {2200,2200};
+        res.put("Amphi Est", p4);
+        return res;
     }
 }

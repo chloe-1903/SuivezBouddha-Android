@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity implements Observer{
         client = new Client();
         client.addObserver(this);
         client.connect();
-
-        utils = new Utils();
     }
 
     @Override
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         String[] roomName = array.get(i).split(" - ");
 
                         try {
-                            utils.writeToFile(roomName[0]+";", "RoomSelected.txt");
+                            Utils.writeToFile(roomName[0]+";", "RoomSelected.txt");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
