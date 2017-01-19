@@ -86,6 +86,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private Utils utils;
     private String roomSelectedId;
     private int QRCodeID;
+    private boolean macroStopped = false;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
 
@@ -156,15 +157,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         goButton.setOnClickListener( this );
         stopButton.setOnClickListener( this );
 
-        scanButton.setAlpha(.5f);
-        scanButton.setClickable(false);
-
-        goButton.setAlpha(.5f);
-        goButton.setClickable(false);
-
-        stopButton.setAlpha(.5f);
-        stopButton.setClickable(false);
-
+        //Disable buttons
+        switchButtonState(scanButton, false);
+        switchButtonState(goButton, false);
+        switchButtonState(stopButton, false);
         _calibrationButtonView.setAlpha(.5f);
     }
 
@@ -249,12 +245,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             case Online: {
 
                 //Set buttons enable
-                goButton.setAlpha(1f);
-                goButton.setClickable(true);
-
-                stopButton.setAlpha(1f);
-                stopButton.setClickable(true);
-
+                switchButtonState(goButton, true);
+                switchButtonState(stopButton, true);
                 _calibrationView.setEnabled(true);
                 _calibrationButtonView.setAlpha(1f);
                 _calibrationButtonView.setEnabled(true);
@@ -273,7 +265,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 blink( false );
                 break;
             }
-            case Connecting: {
+            case Connecting: { //TODO TIME OUT
                 //Instructions Popups
                 String message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
                 instructionsPopup(0, "Instructions", message, R.drawable.pastille2, 189, 190);
@@ -293,7 +285,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      */
     public void disconnectRobot() {
 
-        //TODO disables buttons
         Log.d("Sphero", "disconnectRobot");
 
         if( DualStackDiscoveryAgent.getInstance().isDiscovering() ) {
@@ -337,10 +328,13 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         switch( v.getId() ) {
             case R.id.go: {
 
-                //On disable le bouton
-                //TODO
-                goButton.setAlpha(0.5f);
-                goButton.setClickable(false);
+                //Disable go button
+                switchButtonState(goButton, false); //TODO comment this to hack scan
+
+                //Disable calibration button
+                _calibrationView.setEnabled(false);
+                _calibrationButtonView.setAlpha(0.5f);
+                _calibrationButtonView.setClickable(false);
 
                 //Connection to the server
                 client = new Client();
@@ -358,9 +352,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 dataStep++;
                 Log.i("Sphero", "Etape : "+dataStep);
 
-                //Button scan
-                scanButton.setClickable(true);
-                scanButton.setAlpha(1f);
                 scanButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -376,6 +367,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             case R.id.stop: {
                 macro.stopMacro();
                 mRobot.sendCommand(new RollCommand(0, 0.0f, RollCommand.State.STOP));
+
+                macroStopped = true;
+                //Enable scan
+                switchButtonState(scanButton, true);
                 break;
             }
         }
@@ -404,15 +399,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 Log.v("Sphero", "Calibration began!");
                 mRobot.calibrating(true);
 
-                //Lock other buttons
-                scanButton.setAlpha(.5f);
-                scanButton.setClickable(false);
-
-                goButton.setAlpha(.5f);
-                goButton.setClickable(false);
-
-                stopButton.setAlpha(.5f);
-                stopButton.setClickable(false);
+                //Disable buttons
+                switchButtonState(scanButton, false);
+                switchButtonState(goButton, false);
+                switchButtonState(stopButton, false);
             }
 
             /**
@@ -453,15 +443,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 mRobot.stop();
                 mRobot.calibrating(false);
 
-                //Unlock other buttons
-                scanButton.setAlpha(1f);
-                scanButton.setClickable(true);
-
-                goButton.setAlpha(1f);
-                goButton.setClickable(true);
-
-                stopButton.setAlpha(1f);
-                stopButton.setClickable(true);
+                //Enable buttons
+                switchButtonState(goButton, true);
+                switchButtonState(stopButton, true);
             }
         });
         // Like the joystick, turn this off until a robot connects.
@@ -472,6 +456,31 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         _calibrationButtonView = (CalibrationImageButtonView) findViewById(R.id.calibrateButton);
         _calibrationButtonView.setCalibrationView(_calibrationView);
         _calibrationButtonView.setEnabled(false);
+    }
+
+    /**
+     * unlock scan when macro end
+     * @param delay
+     */
+    public void unlockScanAfterMacroEnd(int delay) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                //Enable scan
+                switchButtonState(scanButton, true);
+            }
+        }, (delay + delay));
+    }
+
+    public void switchButtonState(Button button, boolean state){
+
+        if(state) {
+            button.setAlpha(1f);
+            button.setClickable(true);
+        } else {
+            button.setClickable(false);
+            button.setAlpha(0.5f);
+        }
     }
 
     //===============================================
@@ -555,6 +564,11 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             macro.setRobot( mRobot.getRobot() );
             macro.playMacro();
 
+            //unlock scan
+            if(!finish) {
+                unlockScanAfterMacroEnd(delayTotal);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -567,7 +581,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      * @param resultCode
      * @param data
      */
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) { //TODO Lock scan while sphero move
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 // A contact was picked.  Here we will just display it
@@ -576,18 +590,16 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 int QRCodeIDRevied = data.getIntExtra("index", -1);
 
                 if(dataBool && QRCodeIDRevied == QRCodeID) {
-                    //Run sphero
-                    scanButton.setClickable(false);
-                    scanButton.setAlpha(0.5f);
 
+                    //Disable scan
+                    switchButtonState(scanButton, false);
+
+                    //Run sphero
                     Log.i("Sphero", "Instructions globales : " + dataStep);
                     client.askDirection(roomSelectedId, String.valueOf(dataStep));
                     dataStep++;
                     Log.i("Sphero", "Etape : "+dataStep);
 
-                    //Unlock scan
-                    scanButton.setClickable(true);
-                    scanButton.setAlpha(1f);
                     scanButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -662,41 +674,46 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         handler.postDelayed(new Runnable() {
             public void run() {
 
-                final float scale = getResources().getDisplayMetrics().density;
+                if(!macroStopped) {
+                    final float scale = getResources().getDisplayMetrics().density;
 
-                //Add layout image
-                LayoutInflater factory = LayoutInflater.from(Sphero.this);
-                final View view = factory.inflate(R.layout.popup, null);
+                    //Add layout image
+                    LayoutInflater factory = LayoutInflater.from(Sphero.this);
+                    final View view = factory.inflate(R.layout.popup, null);
 
-                //Switch image
-                ImageView image = (ImageView) view.findViewById(R.id.dialog_imageview);
-                image.setImageResource(R.drawable.pastille2);
-                image.getLayoutParams().height = (int) (189 * scale);
-                image.getLayoutParams().width = (int) (190 * scale);
-                image.requestLayout();
+                    //Switch image
+                    ImageView image = (ImageView) view.findViewById(R.id.dialog_imageview);
+                    image.setImageResource(R.drawable.pastille2);
+                    image.getLayoutParams().height = (int) (189 * scale);
+                    image.getLayoutParams().width = (int) (190 * scale);
+                    image.requestLayout();
 
-                //popup
-                AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
-                alertDialog.setTitle("Attention un escalier !");
-                alertDialog.setMessage(popUpMessage);
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.setView(view);
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                    //popup
+                    AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
+                    alertDialog.setTitle("Attention un escalier !");
+                    alertDialog.setMessage(popUpMessage);
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setView(view);
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
 
-                alertDialog.show();
+                    alertDialog.show();
 
-                //Center the text
-                TextView messageText = (TextView)alertDialog.findViewById(android.R.id.message);
-                messageText.setGravity(Gravity.CENTER);
+                    //Center the text
+                    TextView messageText = (TextView) alertDialog.findViewById(android.R.id.message);
+                    messageText.setGravity(Gravity.CENTER);
 
-                //Vibration
-                Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                v.vibrate(500);
+                    //Vibration
+                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(500);
+                }
+                else {
+                    macroStopped = false;
+                }
             }
         }, (delay + delay));
     }
@@ -771,27 +788,34 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         handler.postDelayed(new Runnable() {
             public void run() {
 
-                //popup
-                AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
-                alertDialog.setTitle("Fin du parcours !");
-                alertDialog.setMessage("Vous êtes bien arrivé à destination.");
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                if(!macroStopped) {
+                    //popup
+                    AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
+                    alertDialog.setTitle("Fin du parcours !");
+                    alertDialog.setMessage("Vous êtes bien arrivé à destination.");
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
 
-                alertDialog.show();
+                    alertDialog.show();
 
-                //Center the text
-                TextView messageText = (TextView)alertDialog.findViewById(android.R.id.message);
-                messageText.setGravity(Gravity.CENTER);
+                    //Center the text
+                    TextView messageText = (TextView) alertDialog.findViewById(android.R.id.message);
+                    messageText.setGravity(Gravity.CENTER);
 
-                //ici
-                disconnectRobot();
+                    //disable stop
+                    switchButtonState(stopButton, false);
 
+                    //Disconnect the sphero
+                    disconnectRobot();
+                }
+                else {
+                    macroStopped = false;
+                }
             }
         }, (delay + delay));
     }
