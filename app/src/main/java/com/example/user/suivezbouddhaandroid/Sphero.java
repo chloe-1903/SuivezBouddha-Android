@@ -20,6 +20,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
@@ -59,6 +60,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import static com.orbotix.common.RobotChangedStateListener.RobotChangedStateNotificationType.Connected;
+
 
 /**
  * Hello World Sample
@@ -87,6 +90,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private String roomSelectedId;
     private int QRCodeID;
     private boolean macroStopped = false;
+    private  RobotChangedStateNotificationType typeGlobal;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
 
@@ -239,9 +243,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      */
     @Override
     public void handleRobotChangedState( Robot robot, RobotChangedStateNotificationType type ) {
+        typeGlobal = type;
         Log.d("Sphero", String.valueOf(type));
         Toast.makeText(getApplicationContext(), String.valueOf(type), Toast.LENGTH_SHORT).show();
-        switch( type ) {
+        switch( typeGlobal ) {
             case Online: {
 
                 //Set buttons enable
@@ -265,11 +270,30 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 blink( false );
                 break;
             }
-            case Connecting: { //TODO TIME OUT
+            case Connecting: {
                 //Instructions Popups
                 String message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
                 instructionsPopup(0, "Instructions", message, R.drawable.pastille2, 189, 190);
+                break;
+            }
+            case Connected: {
+                /*
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        new CountDownTimer(5000, 5000) {
+                            public void onTick(long millisUntilFinished) {
+                            }
 
+                            public void onFinish() {
+                                if (typeGlobal == Connected) {
+                                    Log.i("Sphero", "Planté !");
+                                    //TODO Desactivier bluetooth et réactivier + relancer recherche ?
+                                }
+                            }
+                        }.start();
+                    }
+                });
+                */
                 break;
             }
             case Disconnected: {
