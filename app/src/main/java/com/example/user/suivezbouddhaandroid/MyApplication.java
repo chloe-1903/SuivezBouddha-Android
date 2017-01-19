@@ -31,21 +31,23 @@ public class MyApplication extends Application {
         beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
             @Override
             public void onEnteredRegion(Region region, List<Beacon> list) {
-                Toast.makeText(getApplicationContext(), "Koukou, bienvenue dans la zone de ouf", Toast.LENGTH_LONG).show();
                 showNotification(
-                        "Your gate closes in 47 minutes.",
-                        "Current security wait time is 15 minutes, "
-                                + "and it's a 5 minute walk from security to the gate. "
-                                + "Looks like you've got plenty of time!");
+                        "FLASH INFO",
+                        "Vous entrez dans la zone du beacon.");
             }
             @Override
             public void onExitedRegion(Region region) {
                 // exit notification
-                Toast.makeText(getApplicationContext(), "alé a+", Toast.LENGTH_LONG).show();
+                showNotification(
+                        "FLASH INFO",
+                        "Vous sortez de la zone du beacon.");
             }
         });
 
         beaconManager.setBackgroundScanPeriod(200, 0);
+
+        // update every 3 second
+        beaconManager.setRegionExitExpiration(3000);
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
