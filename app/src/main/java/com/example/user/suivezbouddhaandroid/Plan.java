@@ -32,7 +32,8 @@ public class Plan extends AppCompatActivity implements Observer {
     private Button scanButton;
     private int currentFloor = 1;
     private String roomSelectedId;
-    private Integer[] roomPosition;
+    private String[] roomPosition;
+    private int roomFloor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +49,8 @@ public class Plan extends AppCompatActivity implements Observer {
         String line = Utils.readFile("RoomSelected.txt");
         String[] roomSelectedIdTab = line.split(";");
         roomSelectedId = roomSelectedIdTab[0];
-        HashMap<String, Integer[]> roomPositions = Utils.setRoomsPosition();
-        roomPosition = roomPositions.get(roomSelectedId);
-
-
+        roomPosition = roomSelectedIdTab[1].split("-");
+        roomFloor = Integer.valueOf(roomSelectedIdTab[2]);
         //Création du listener du scan
         scanButton = (Button)findViewById(R.id.scan_button);
         scanButton.setOnClickListener(new View.OnClickListener() {
@@ -82,11 +81,12 @@ public class Plan extends AppCompatActivity implements Observer {
                 if (x!=0 && y !=0){
                     float scale = getResources().getDisplayMetrics().density;
                     c.drawCircle(x*scale, y*scale, 35, p);
+                }if (currentFloor== roomFloor) { //si on est au bon étage, on met la salle en valeur
+                    Paint paintArrival = new Paint();
+                    paintArrival.setColor(Color.rgb(119, 170, 119));
+                    c.drawCircle(Integer.valueOf(roomPosition[0]), Integer.valueOf(roomPosition[1]), 100, paintArrival);
                 }
-                Paint paintArrival = new Paint();
-                paintArrival.setColor(Color.rgb(119, 170, 119));
-                c.drawCircle(roomPosition[0], roomPosition[1], 100, paintArrival);
-                Log.d("salle selectionnée ", ""+roomSelectedId);
+                //Log.d("salle selectionnée ", ""+roomSelectedId);
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
             }
         });

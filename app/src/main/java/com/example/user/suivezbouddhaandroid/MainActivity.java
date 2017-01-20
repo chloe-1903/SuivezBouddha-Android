@@ -31,7 +31,7 @@ import java.util.Observer;
 public class MainActivity extends AppCompatActivity implements Observer{
     private Client client;
     private Utils utils;
-    private HashMap<String, String> rooms;
+    private HashMap<String, ArrayList<String>> rooms;
     private ArrayList<String> array;
 
     private static final String[] PERMS = {
@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements Observer{
         final ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
         array = new ArrayList<>();
         for(String num : rooms.keySet()) {
-            array.add(num + " - "+ rooms.get(num));
-            Log.d("->"," ListItem " + num + " - "+ rooms.get(num) );
+            array.add(num + " - "+ rooms.get(num).get(1));
+            //Log.d("->"," ListItem " + num + " - "+ rooms.get(num).get() );
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , array);
         runOnUiThread(new Runnable() {
@@ -93,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         String[] roomName = array.get(i).split(" - ");
 
                         try {
-                            Utils.writeToFile(roomName[0]+";", "RoomSelected.txt");
+                            //nom;x-y;étage;(1 ou 2)
+                            Utils.writeToFile(roomName[0]+";"+ rooms.get(roomName[0]).get(2) + ";" + rooms.get(roomName[0]).get(0) + ";", "RoomSelected.txt");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

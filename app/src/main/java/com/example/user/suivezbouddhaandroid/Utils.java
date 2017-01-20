@@ -57,17 +57,4 @@ public class Utils {
 
         return text.toString();
     }
-
-    public static HashMap<String, Integer[]> setRoomsPosition(){
-        HashMap<String, Integer[]> res = new HashMap<>();
-        Integer[] p1 = {650,500};
-        res.put("Cafeteria", p1);
-        Integer[] p2 = {1850,600};
-        res.put("Bibliotheque", p2);
-        Integer[] p3 = {1800,2600};
-        res.put("Amphi Ouest", p3);
-        Integer[] p4 = {2200,2200};
-        res.put("Amphi Est", p4);
-        return res;
-    }
 }

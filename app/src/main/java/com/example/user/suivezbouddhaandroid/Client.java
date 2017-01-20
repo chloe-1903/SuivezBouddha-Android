@@ -3,6 +3,7 @@ package com.example.user.suivezbouddhaandroid;
 import android.util.Log;
 import java.net.URISyntaxException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 
@@ -18,14 +19,15 @@ import io.socket.emitter.Emitter;
 /**
  * Created by user on 16/12/16.
  */
+
 public class Client extends Observable {
     private Socket mSocket;
     private Boolean isConnected;
-    private final String serverAddress = "http://192.168.1.95:8080/";//http://10.212.109.188:8080/
+    private final String serverAddress = "http://10.212.111.29:8080/";//http://10.212.109.188:8080/
     private String message ;
     private JSONObject position;
     private JSONObject directions;
-    private HashMap<String, String> rooms;
+    private HashMap<String, ArrayList<String>> rooms;
 
     public Client(){
         isConnected = false;
@@ -124,9 +126,13 @@ public class Client extends Observable {
                     JSONArray jsonRooms = jsonFloor.getJSONArray("rooms");
                     for (int k = 0; k< jsonRooms.length() ; k++)
                     {
+                        ArrayList<String> salleInfos = new ArrayList<>();
+                        salleInfos.add(0, Integer.toString(i+1)); //etage
                         JSONObject jsonRoom = jsonRooms.getJSONObject(k);
+                        salleInfos.add(1,jsonRoom.getString("activity")); //Activité à faire dans la salle
+                        salleInfos.add(2,jsonRoom.getString("positionAndroid"));
                         Log.d("-> Salle :",jsonRoom.getString("number")+ "-"+ jsonRoom.getString("activity"));
-                        rooms.put(jsonRoom.getString("number"), jsonRoom.getString("activity"));
+                        rooms.put(jsonRoom.getString("number"), salleInfos);
                     }
                 }
                 setChanged();
@@ -193,7 +199,7 @@ public class Client extends Observable {
         mSocket.connect();
     }
 
-    public HashMap<String, String> getRooms(){ return rooms;}
+    public HashMap<String, ArrayList<String>> getRooms(){ return rooms;}
 
     public boolean isConnected() { return isConnected;}
 
