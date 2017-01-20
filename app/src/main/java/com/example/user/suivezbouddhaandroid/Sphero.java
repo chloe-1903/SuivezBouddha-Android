@@ -269,12 +269,12 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 break;
             }
             case Connecting: {
-                //Instructions Popups
-                String message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
-                instructionsPopup(0, "Instructions", message, R.drawable.pastille2, 189, 190);
                 break;
             }
             case Connected: {
+                //Instructions Popups
+                String message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
+                instructionsPopup(0, "Instructions", message, R.drawable.pastille2, 189, 190);
                 /*
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -285,7 +285,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                             public void onFinish() {
                                 if (typeGlobal == Connected) {
                                     Log.i("Sphero", "Planté !");
-                                    //TODO Desactivier bluetooth et réactivier + relancer recherche ?
+                                    //TODO Trouver comment relancer le tout proprement
+                                    //Un disconnect ne déconnecte pas vraiment la sphero...
+                                    //Desactiver le Bluetooth le fait, mais on ne peut plus le réactiver automatiquement...
                                 }
                             }
                         }.start();
