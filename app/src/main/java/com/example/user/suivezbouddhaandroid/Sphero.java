@@ -249,7 +249,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 //Set buttons enable
                 switchButtonState(goButton, true);
-                switchButtonState(stopButton, true);
+                //switchButtonState(stopButton, true);
                 _calibrationView.setEnabled(true);
                 _calibrationButtonView.setAlpha(1f);
                 _calibrationButtonView.setEnabled(true);
@@ -273,8 +273,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             }
             case Connected: {
                 //Instructions Popups
-                String message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
-                instructionsPopup(0, "Instructions", message, R.drawable.pastille2, 189, 190);
+                instructionsPopup();
+
                 /*
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -354,6 +354,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 //Disable go button
                 switchButtonState(goButton, false); //TODO comment this to hack scan
+
+                //Enable stop button
+                switchButtonState(stopButton, true);
 
                 //Disable calibration button
                 _calibrationView.setEnabled(false);
@@ -744,19 +747,17 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
 
     /**
-     * Start instructions popups
-     * @param id
+     * Classic popup with image
      * @param title
      * @param text
      * @param imageInt
      * @param height
      * @param width
      */
-    public void instructionsPopup(final int id, final String title, final String text, final int imageInt, final int height, final int width) {
-        //TODO Fix lags
-        runOnUiThread(new Runnable() {
+    public void imgPopup(final String title, final String text, final int imageInt, final int height, final int width) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
             public void run() {
-
                 final float scale = getResources().getDisplayMetrics().density;
 
                 //Add layout image
@@ -779,16 +780,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                if(id == 0) {
-                                    String message = "Une fois la boule positionnée et connectée, mettez-vous derrière la sphère et utilisez le bouton rond pour calibrer Bouddha comme sur l'image.";
-                                    instructionsPopup(1, "Instructions", message, R.drawable.calibration, 166, 158);
-                                } else if ( id == 1) {
-                                    String message = "Une fois que Bouddha sera bien calibré, vous pourrez appuyer sur le bouton \"GO\" et vous commencerez à suivre la boule ! En cas de problème, vous pouvez toujours appuyer sur le bouton \"STOP\" pour arrêter la sphère.";
-                                    instructionsPopup(2, "Instructions", message, R.drawable.menu, 166, 318);
-                                } else if ( id == 2) {
-                                    String message = "Lorsque celle-ci s'arrêtera, il vous faudra scanner le QRCode le plus proche à l'aide du bouton \"SCAN\"";
-                                    instructionsPopup(3, "Instructions", message, R.drawable.menu2, 77, 318);
-                                }
+                                //nothing, just close automatically
                             }
                         });
                 try {
@@ -801,12 +793,35 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 //Center the text
                 TextView messageText = (TextView)alertDialog.findViewById(android.R.id.message);
                 messageText.setGravity(Gravity.CENTER);
-
             }
-        });
-
+        }, (0));
     }
 
+    /**
+     * Start instructions popups
+     */
+    public void instructionsPopup() {
+        //Pop 4
+        String message = "Lorsque celle-ci s'arrêtera, il vous faudra scanner le QRCode le plus proche à l'aide du bouton \"SCAN\"";
+        imgPopup("Instructions", message, R.drawable.menu2, 77, 318);
+
+        //Pop 3
+        message = "Une fois que Bouddha sera bien calibré, vous pourrez appuyer sur le bouton \"GO\" et vous commencerez à suivre la boule ! En cas de problème, vous pouvez toujours appuyer sur le bouton \"STOP\" pour arrêter la sphère.";
+        imgPopup("Instructions", message, R.drawable.menu, 166, 318);
+
+        //Pop 2
+        message = "Une fois la boule positionnée et connectée, mettez-vous derrière la sphère et utilisez le bouton rond pour calibrer Bouddha comme sur l'image.";
+        imgPopup("Instructions", message, R.drawable.calibration, 166, 158);
+
+        //Pop 1
+        message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
+        imgPopup("Instructions", message, R.drawable.pastille2, 189, 190);
+    }
+
+    /**
+     * End popup
+     * @param delay
+     */
     public void endPopup(int delay) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
@@ -816,7 +831,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     //popup
                     AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
                     alertDialog.setTitle("Fin du parcours !");
-                    alertDialog.setMessage("Vous êtes bien arrivé à destination.");
+                    alertDialog.setMessage("Vous êtes arrivé à destination.");
                     alertDialog.setCanceledOnTouchOutside(false);
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                             new DialogInterface.OnClickListener() {
