@@ -31,16 +31,17 @@ public class MyApplication extends Application {
         beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
             @Override
             public void onEnteredRegion(Region region, List<Beacon> list) {
-                showNotification(
+                Toast.makeText(getApplicationContext(), "Vous entrez dans la zone du beacon.", Toast.LENGTH_LONG).show();
+                /*showNotification(
                         "FLASH INFO",
-                        "Vous entrez dans la zone du beacon.");
+                        "Vous entrez dans la zone du beacon.");*/
             }
             @Override
             public void onExitedRegion(Region region) {
-                // exit notification
-                showNotification(
+                Toast.makeText(getApplicationContext(), "Vous sortez de la zone du beacon.", Toast.LENGTH_LONG).show();
+                /*showNotification(
                         "FLASH INFO",
-                        "Vous sortez de la zone du beacon.");
+                        "Vous sortez de la zone du beacon.");*/
             }
         });
 

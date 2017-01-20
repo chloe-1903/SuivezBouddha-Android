@@ -219,12 +219,13 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                     .convertPose2GLMatrix(result.getPose());
             float[] modelViewMatrix = modelViewMatrix_Vuforia.getData();
 
-            int textureIndex = trackable.getName().equalsIgnoreCase("stones") ? 0
+            /*int textureIndex = trackable.getName().equalsIgnoreCase("stones") ? 0
                     : 1;
             textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2
                     : textureIndex;
             textureIndex = trackable.getName().equalsIgnoreCase("QRCode_1") ? 4
-                    : textureIndex;
+                    : textureIndex;*/
+            int textureIndex = 4;
 
             if(trackable.getName().equalsIgnoreCase("QRCode_1")) {
                 mActivity.runOnUiThread(new Runnable() {
