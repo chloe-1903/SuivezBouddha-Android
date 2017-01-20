@@ -71,7 +71,7 @@ public class Plan extends AppCompatActivity implements Observer {
         //client.askPosition("0");
 
         //Instruction popup
-        String message = "Scannez les QRCodes à l'aide du bouton \"OÙ SUIS-JE ?\" pour afficher votre position !";
+        String message = "Scannez les QRCodes à l'aide du bouton \"OÙ SUIS-JE ?\" pour afficher votre position. La salle est indiquée par un point vert et votre position par un point rouge.";
         imgPopup("Instructions", message, R.drawable.scan_qrcode, 144, 248);
     }
 
