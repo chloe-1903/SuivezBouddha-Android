@@ -33,24 +33,22 @@ public class MyApplication extends Application {
         beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
             @Override
             public void onEnteredRegion(Region region, List<Beacon> list) {
-                Toast.makeText(getApplicationContext(), "Vous entrez dans la zone du beacon.", Toast.LENGTH_LONG).show();
                 /*showNotification(
                         "FLASH INFO",
                         "Vous entrez dans la zone du beacon.");*/
                 targetRoom = Utils.readFile("RoomSelected.txt");
                 String[] roomSelectedIdTab = targetRoom.split(";");
                 targetRoom = roomSelectedIdTab[0];
+                Toast.makeText(getApplicationContext(), "Vous êtes en salle " + targetRoom + ".", Toast.LENGTH_LONG).show();
             }
             @Override
             public void onExitedRegion(Region region) {
-                Toast.makeText(getApplicationContext(), "Vous sortez de la zone du beacon.", Toast.LENGTH_LONG).show();
-                /*showNotification(
-                        "FLASH INFO",
-                        "Vous sortez de la zone du beacon.");*/
+                // exit notification ?
             }
         });
 
-        beaconManager.setBackgroundScanPeriod(200, 0);
+        // scan every second, no wait time (not good for battery life)
+        beaconManager.setBackgroundScanPeriod(1000, 0);
 
         // update every 3 second
         beaconManager.setRegionExitExpiration(3000);
