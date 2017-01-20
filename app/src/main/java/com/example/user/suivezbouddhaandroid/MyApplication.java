@@ -23,6 +23,8 @@ public class MyApplication extends Application {
 
     private BeaconManager beaconManager;
 
+    private String targetRoom;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -35,6 +37,9 @@ public class MyApplication extends Application {
                 /*showNotification(
                         "FLASH INFO",
                         "Vous entrez dans la zone du beacon.");*/
+                targetRoom = Utils.readFile("RoomSelected.txt");
+                String[] roomSelectedIdTab = targetRoom.split(";");
+                targetRoom = roomSelectedIdTab[0];
             }
             @Override
             public void onExitedRegion(Region region) {

@@ -12,7 +12,7 @@ package vuforia.utils;
 import java.nio.Buffer;
 
 
-public class Teapot extends MeshObject
+public class Arrow extends MeshObject
 {
 
     private Buffer mVertBuff;
@@ -22,7 +22,7 @@ public class Teapot extends MeshObject
     private int verticesNumber = 0;
 
 
-    public Teapot()
+    public Arrow()
     {
         setVerts();
         setTexCoords();
