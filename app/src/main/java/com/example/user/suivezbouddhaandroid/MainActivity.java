@@ -77,8 +77,9 @@ public class MainActivity extends AppCompatActivity implements Observer{
         final ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
         array = new ArrayList<>();
         for(String num : rooms.keySet()) {
-            array.add(num + " - "+ rooms.get(num).get(1));
-            //Log.d("->"," ListItem " + num + " - "+ rooms.get(num).get() );
+           if (!rooms.get(num).get(1).equals(""))//S'il y a une activité dans la salle, on l'affiche
+                array.add(num + " - "+ rooms.get(num).get(1));
+           // Log.d("->salle"," ListItem " + num + " - "+ rooms.get(num).get(1) );
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , array);
         runOnUiThread(new Runnable() {
