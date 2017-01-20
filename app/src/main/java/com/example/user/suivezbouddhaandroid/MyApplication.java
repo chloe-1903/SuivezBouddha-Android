@@ -51,7 +51,7 @@ public class MyApplication extends Application {
             }
         });
 
-        // scan every second, no wait time (not good for battery life)
+        // scan every second ; default value for wait time
         beaconManager.setBackgroundScanPeriod(1000, 25000);
 
         // update every 3 second
