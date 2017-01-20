@@ -16,7 +16,6 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.vuforia.Device;
 import com.vuforia.Matrix44F;
@@ -32,7 +31,7 @@ import vuforia.utils.CubeShaders;
 import vuforia.utils.LoadingDialogHandler;
 import vuforia.utils.SampleApplication3DModel;
 import vuforia.utils.SampleUtils;
-import vuforia.utils.Teapot;
+import vuforia.utils.Arrow;
 import vuforia.utils.Texture;
 
 import java.io.IOException;
@@ -59,7 +58,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
     private int mvpMatrixHandle;
     private int texSampler2DHandle;
     
-    private Teapot mTeapot;
+    private Arrow mArrow;
     
     private float kBuildingScale = 2.0f;
     private SampleApplication3DModel mBuildingsModel;
@@ -174,7 +173,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             "texSampler2D");
 
         if(!mModelIsLoaded) {
-            mTeapot = new Teapot();
+            mArrow = new Arrow();
 
             try {
                 mBuildingsModel = new SampleApplication3DModel();
@@ -369,9 +368,9 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
 
             if (!mActivity.isExtendedTrackingActive()) {
                 GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                        false, 0, mTeapot.getVertices());
+                        false, 0, mArrow.getVertices());
                 GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                        GLES20.GL_FLOAT, false, 0, mTeapot.getTexCoords());
+                        GLES20.GL_FLOAT, false, 0, mArrow.getTexCoords());
 
                 GLES20.glEnableVertexAttribArray(vertexHandle);
                 GLES20.glEnableVertexAttribArray(textureCoordHandle);
@@ -391,7 +390,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                         mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
                         mTeapot.getIndices());*/
                 // and without indices...
-                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mTeapot.getNumObjectVertex());
+                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mArrow.getNumObjectVertex());
 
                 // disable the enabled arrays
                 GLES20.glDisableVertexAttribArray(vertexHandle);
