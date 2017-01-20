@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -76,7 +77,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
     //private int idStep;
     private Intent returnIntent;
 
-    
+
     
     //public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session, int idStep)
     public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session)
@@ -234,11 +235,19 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                             Toast.makeText(mActivity, "QRCode #1 scanné", Toast.LENGTH_SHORT).show();
                         qrCode1 = true;
 
-                        returnIntent = new Intent();
-                        returnIntent.putExtra("data", dataBool = true);
-                        returnIntent.putExtra("index", i = 1);
-                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
-                        mActivity.finish();
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 1);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
+
+                            }
+                        }, 3000);
 
                     }
                 });
