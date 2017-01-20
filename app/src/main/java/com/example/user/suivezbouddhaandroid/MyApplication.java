@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
@@ -39,6 +40,9 @@ public class MyApplication extends Application {
                 targetRoom = Utils.readFile("RoomSelected.txt");
                 String[] roomSelectedIdTab = targetRoom.split(";");
                 targetRoom = roomSelectedIdTab[0];
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 500 milliseconds
+                v.vibrate(500);
                 Toast.makeText(getApplicationContext(), "Vous êtes en salle " + targetRoom + ".", Toast.LENGTH_LONG).show();
             }
             @Override
@@ -48,7 +52,7 @@ public class MyApplication extends Application {
         });
 
         // scan every second, no wait time (not good for battery life)
-        beaconManager.setBackgroundScanPeriod(1000, 0);
+        beaconManager.setBackgroundScanPeriod(1000, 25000);
 
         // update every 3 second
         beaconManager.setRegionExitExpiration(3000);
