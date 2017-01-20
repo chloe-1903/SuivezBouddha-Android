@@ -500,7 +500,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
     // Shows initialization error messages as System dialogs
     public void showInitializationErrorMessage(String message)
     {
-        final String errorMessage = message;
+        final String errorMessage = "Veuillez relancer le scanner.";
         runOnUiThread(new Runnable()
         {
             public void run()
@@ -515,7 +515,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
                         ScanActivity.this);
                 builder
                         .setMessage(errorMessage)
-                        .setTitle("ERROR")
+                        .setTitle("CALIBRATION TERMINEE")
                         .setCancelable(false)
                         .setIcon(0)
                         .setPositiveButton("OK",
