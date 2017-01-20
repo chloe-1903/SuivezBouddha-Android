@@ -90,14 +90,14 @@ public class Plan extends AppCompatActivity implements Observer {
                 c.drawBitmap(bitmap, 0, 0, null);
                 Paint p = new Paint();
                 p.setColor(Color.rgb(204, 102, 119));
+                float scale = getResources().getDisplayMetrics().density;
                 if (x!=0 && y !=0){
-                    float scale = getResources().getDisplayMetrics().density;
                     c.drawCircle(x*scale, y*scale, 35, p);
-                }if (currentFloor== roomFloor) { //si on est au bon étage, on met la salle en valeur
+                }//if (currentFloor== roomFloor) { //si on est au bon étage, on met la salle en valeur
                     Paint paintArrival = new Paint();
                     paintArrival.setColor(Color.rgb(119, 170, 119));
-                    c.drawCircle(Integer.valueOf(roomPosition[0]), Integer.valueOf(roomPosition[1]), 100, paintArrival);
-                }
+                    c.drawCircle(Integer.valueOf(roomPosition[0])*scale, Integer.valueOf(roomPosition[1])*scale, 100, paintArrival);
+                //}
                 //Log.d("salle selectionnée ", ""+roomSelectedId);
                 imageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
             }

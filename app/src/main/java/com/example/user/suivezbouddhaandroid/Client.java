@@ -40,7 +40,7 @@ public class Client extends Observable {
         try {
             position.put("id", new Integer(0));
             position.put("position", "0-0");
-            position.put("floor", new Integer(2));
+            position.put("floor", new Integer(0));
         } catch (JSONException e) {
             e.printStackTrace();
         }
