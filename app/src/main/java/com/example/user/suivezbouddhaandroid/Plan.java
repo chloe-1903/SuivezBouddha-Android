@@ -30,7 +30,7 @@ public class Plan extends AppCompatActivity implements Observer {
     private float x;
     private float y;
     private Button scanButton;
-    private int currentFloor = 1;
+    private int currentFloor;
     private String roomSelectedId;
     private String[] roomPosition;
     private int roomFloor;
@@ -51,6 +51,7 @@ public class Plan extends AppCompatActivity implements Observer {
         roomSelectedId = roomSelectedIdTab[0];
         roomPosition = roomSelectedIdTab[1].split("-");
         roomFloor = Integer.valueOf(roomSelectedIdTab[2]);
+        currentFloor = roomFloor; //On part du principe que l'utilisateur est déjà au bon étage
         //Création du listener du scan
         scanButton = (Button)findViewById(R.id.scan_button);
         scanButton.setOnClickListener(new View.OnClickListener() {
