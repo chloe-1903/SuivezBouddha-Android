@@ -231,10 +231,6 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             if(trackable.getName().equalsIgnoreCase("QRCode_1")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        if (!qrCode1)
-                            Toast.makeText(mActivity, "QRCode #1 scanné", Toast.LENGTH_SHORT).show();
-                        qrCode1 = true;
-
                         // display the arrow for 3s
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
@@ -256,15 +252,19 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             if(trackable.getName().equalsIgnoreCase("QRCode_2")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        if (!qrCode2)
-                            Toast.makeText(mActivity, "QRCode #2 scanné", Toast.LENGTH_SHORT).show();
-                        qrCode2 = true;
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 2);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
 
-                        returnIntent = new Intent();
-                        returnIntent.putExtra("data", dataBool = true);
-                        returnIntent.putExtra("index", i = 2);
-                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
-                        mActivity.finish();
+                            }
+                        }, 3000);
                     }
                 });
             }
@@ -272,15 +272,19 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             if(trackable.getName().equalsIgnoreCase("QRCode_3")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        if (!qrCode2)
-                            Toast.makeText(mActivity, "QRCode #3 scanné", Toast.LENGTH_SHORT).show();
-                        qrCode2 = true;
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 3);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
 
-                        returnIntent = new Intent();
-                        returnIntent.putExtra("data", dataBool = true);
-                        returnIntent.putExtra("index", i = 3);
-                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
-                        mActivity.finish();
+                            }
+                        }, 3000);
                     }
                 });
             }
@@ -288,15 +292,19 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             if(trackable.getName().equalsIgnoreCase("QRCode_4")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        if (!qrCode2)
-                            Toast.makeText(mActivity, "QRCode #4 scanné", Toast.LENGTH_SHORT).show();
-                        qrCode2 = true;
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 4);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
 
-                        returnIntent = new Intent();
-                        returnIntent.putExtra("data", dataBool = true);
-                        returnIntent.putExtra("index", i = 4);
-                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
-                        mActivity.finish();
+                            }
+                        }, 3000);
                     }
                 });
             }
@@ -304,15 +312,19 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             if(trackable.getName().equalsIgnoreCase("QRCode_5")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        if (!qrCode2)
-                            Toast.makeText(mActivity, "QRCode #5 scanné", Toast.LENGTH_SHORT).show();
-                        qrCode2 = true;
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 5);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
 
-                        returnIntent = new Intent();
-                        returnIntent.putExtra("data", dataBool = true);
-                        returnIntent.putExtra("index", i = 5);
-                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
-                        mActivity.finish();
+                            }
+                        }, 3000);
                     }
                 });
             }
@@ -320,15 +332,19 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             if(trackable.getName().equalsIgnoreCase("QRCode_6")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        if (!qrCode2)
-                            Toast.makeText(mActivity, "QRCode #6 scanné", Toast.LENGTH_SHORT).show();
-                        qrCode2 = true;
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 6);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
 
-                        returnIntent = new Intent();
-                        returnIntent.putExtra("data", dataBool = true);
-                        returnIntent.putExtra("index", i = 6);
-                        mActivity.setResult(Activity.RESULT_OK,returnIntent);
-                        mActivity.finish();
+                            }
+                        }, 3000);
                     }
                 });
             }
