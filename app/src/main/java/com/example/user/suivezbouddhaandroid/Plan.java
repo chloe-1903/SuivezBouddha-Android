@@ -1,5 +1,7 @@
 package com.example.user.suivezbouddhaandroid;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,14 +9,19 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +69,10 @@ public class Plan extends AppCompatActivity implements Observer {
             }
         });
         //client.askPosition("0");
+
+        //Instruction popup
+        String message = "Scannez les QRCodes à l'aide du bouton \"OÙ SUIS-JE ?\" pour afficher votre position !";
+        imgPopup("Instructions", message, R.drawable.scan_qrcode, 144, 248);
     }
 
     public void drawPosition(){
@@ -122,5 +133,57 @@ public class Plan extends AppCompatActivity implements Observer {
                 }
             }
         }
+    }
+
+
+    /**
+     * Classic popup with image
+     * @param title
+     * @param text
+     * @param imageInt
+     * @param height
+     * @param width
+     */
+    public void imgPopup(final String title, final String text, final int imageInt, final int height, final int width) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                final float scale = getResources().getDisplayMetrics().density;
+
+                //Add layout image
+                LayoutInflater factory = LayoutInflater.from(Plan.this);
+                final View view = factory.inflate(R.layout.popup, null);
+
+                //Switch image
+                ImageView image = (ImageView) view.findViewById(R.id.dialog_imageview);
+                image.setImageResource(imageInt);
+                image.getLayoutParams().height = (int) (height * scale);
+                image.getLayoutParams().width = (int) (width * scale);
+                image.requestLayout();
+
+                //popup
+                AlertDialog alertDialog = new AlertDialog.Builder(Plan.this).create();
+                alertDialog.setTitle(title);
+                alertDialog.setMessage(text);
+                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.setView(view);
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                //nothing, just close automatically
+                            }
+                        });
+                try {
+                    alertDialog.show();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //Center the text
+                TextView messageText = (TextView)alertDialog.findViewById(android.R.id.message);
+                messageText.setGravity(Gravity.CENTER);
+            }
+        }, (0));
     }
 }
