@@ -810,6 +810,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      * Start instructions popups
      */
     public void instructionsPopup() {
+        //TODO changer les images et textes avec les nouveaux menus
         //Pop 4
         String message = "Lorsque celle-ci s'arrêtera, il vous faudra scanner le QRCode le plus proche à l'aide du bouton \"SCAN\"";
         imgPopup("Instructions", message, R.drawable.menu2, 77, 318);
