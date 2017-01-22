@@ -369,7 +369,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 switchButtonState(stopButton, false);
                 break;
             }
-            case R.id.scan: {
+            case R.id.scan: {//TODO Duplication je crois, à check
                 //We will start an other macro, so this is no more true
                 macroStopped = false;
 
@@ -629,9 +629,11 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         Toast.makeText(getApplicationContext(), "Oups ! Nous ne pouvons pas encore aller dans cette salle.", Toast.LENGTH_LONG).show();
                     }
 
+                    //TODO Duplication je crois, à check
                     scanButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                        //TODO faire ca uniquement une fois le QRCode scanné (même mauvais)
                         //We will start an other macro, so this is no more true
                         macroStopped = false;
 
