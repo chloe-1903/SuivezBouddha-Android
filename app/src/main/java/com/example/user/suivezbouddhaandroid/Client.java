@@ -23,10 +23,11 @@ import io.socket.emitter.Emitter;
 public class Client extends Observable {
     private Socket mSocket;
     private Boolean isConnected;
-    private final String serverAddress = "http://10.212.111.29:8080/";//http://10.212.109.188:8080/
+    private final String serverAddress = "http://192.168.1.78:8080/";//http://10.212.109.188:8080/
     private String message ;
     private JSONObject position;
     private JSONObject directions;
+    private boolean finish;
     private HashMap<String, ArrayList<String>> rooms;
 
     public Client(){
@@ -103,6 +104,7 @@ public class Client extends Observable {
             Log.d("->","---------> New direction : "+ args[0]);
             try {
                 directions = new JSONObject(args[0].toString());
+                finish = (boolean) args[1];
                 setChanged();
                 notifyObservers();
                 clearChanged();
@@ -131,6 +133,8 @@ public class Client extends Observable {
                         JSONObject jsonRoom = jsonRooms.getJSONObject(k);
                         salleInfos.add(1,jsonRoom.getString("activity")); //Activité à faire dans la salle
                         salleInfos.add(2,jsonRoom.getString("positionAndroid"));
+                        if(jsonRoom.has("qrcodeId")) //Check if exist and then put it in salleInfos
+                        salleInfos.add(3,jsonRoom.getString("qrcodeId"));
                         Log.d("-> Salle :",jsonRoom.getString("number")+ "-"+ jsonRoom.getString("activity"));
                         rooms.put(jsonRoom.getString("number"), salleInfos);
                     }
@@ -209,5 +213,9 @@ public class Client extends Observable {
 
     public JSONObject getPosition() {
         return position;
+    }
+
+    public boolean isFinish() {
+        return finish;
     }
 }

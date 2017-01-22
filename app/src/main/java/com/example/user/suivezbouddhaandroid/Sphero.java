@@ -74,20 +74,19 @@ import static com.orbotix.common.RobotChangedStateListener.RobotChangedStateNoti
 public class Sphero extends Activity implements RobotChangedStateListener, View.OnClickListener, Observer {
 
     private ConvenienceRobot mRobot;
-    private Button goButton;
     private Button stopButton;
     private Button scanButton;
     private CalibrationView _calibrationView;
     private CalibrationImageButtonView _calibrationButtonView;
     private Client client;
     private JSONObject jsonObject;
-    private int dataStep = 0;
     private AssetManager assets;
     private MacroObject macro;
     private String popUpMessage;
     private Context context;
     private String roomSelectedId;
-    private int QRCodeID;
+    private int QRCodeIDFromSelectedRoom;
+    private int QRCodeID = -1;
     private boolean macroStopped = false;
     private  RobotChangedStateNotificationType typeGlobal;
 
@@ -124,7 +123,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             }
         }
 
-        //for the button
+        //For the calibration button
         setupCalibration();
 
         // Here, you need to route all the touch events to the joystick and calibration view so that they know about
@@ -142,9 +141,11 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         //Init buttons
         initViews();
 
+        //Store data from the file into variables
         roomSelectedId = Utils.readFile("RoomSelected.txt");
         String[] roomSelectedIdTab = roomSelectedId.split(";");
         roomSelectedId = roomSelectedIdTab[0];
+        QRCodeIDFromSelectedRoom = Integer.parseInt(roomSelectedIdTab[3]);
     }
 
     /**
@@ -152,16 +153,14 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      */
     private void initViews() {
 
-        goButton = (Button) findViewById(R.id.go);
         stopButton = (Button) findViewById(R.id.stop);
         scanButton = (Button) findViewById(R.id.scan);
 
-        goButton.setOnClickListener( this );
         stopButton.setOnClickListener( this );
+        scanButton.setOnClickListener( this );
 
         //Disable buttons
         switchButtonState(scanButton, false);
-        switchButtonState(goButton, false);
         switchButtonState(stopButton, false);
         _calibrationButtonView.setAlpha(.5f);
     }
@@ -242,14 +241,13 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     @Override
     public void handleRobotChangedState( Robot robot, RobotChangedStateNotificationType type ) {
         typeGlobal = type;
-        Log.d("Sphero", String.valueOf(type));
+        Log.d("Sphero", "States : "+ String.valueOf(type));
         Toast.makeText(getApplicationContext(), String.valueOf(type), Toast.LENGTH_SHORT).show();
         switch( typeGlobal ) {
             case Online: {
 
                 //Set buttons enable
-                switchButtonState(goButton, true);
-                //switchButtonState(stopButton, true);
+                switchButtonState(scanButton, true);
                 _calibrationView.setEnabled(true);
                 _calibrationButtonView.setAlpha(1f);
                 _calibrationButtonView.setEnabled(true);
@@ -266,6 +264,13 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 //Start blinking the robot's LED
                 blink( false );
+
+                //Connection to the server
+                Log.d("Sphero", "Connexion au serveur");
+                client = new Client();
+                client.addObserver(this);
+                client.connect();
+
                 break;
             }
             case Connecting: {
@@ -350,55 +355,27 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             return;
         }
         switch( v.getId() ) {
-            case R.id.go: {
-
-                //Disable go button
-                switchButtonState(goButton, false); //TODO comment this to hack scan
-
-                //Enable stop button
-                switchButtonState(stopButton, true);
-
-                //Disable calibration button
-                _calibrationView.setEnabled(false);
-                _calibrationButtonView.setAlpha(0.5f);
-                _calibrationButtonView.setClickable(false);
-
-                //Connection to the server
-                client = new Client();
-                client.addObserver(this);
-                client.connect();
-
-                while(!client.isConnected());
-
-                //Play a sound
-                playSond(0, "R2D2Scream.mp3");
-
-                //Ask for a direction
-                Log.i("Sphero", "Instructions globales : " + dataStep);
-                client.askDirection(roomSelectedId, String.valueOf(dataStep));
-                dataStep++;
-                Log.i("Sphero", "Etape : "+dataStep);
-
-                scanButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        //Start scan activity
-                        Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                        //myIntent.putExtra("id", dataStep);
-                        startActivityForResult(myIntent, 1);
-                    }
-                });
-                break;
-            }
             case R.id.stop: {
+                //Stop the macro, so stop the sphero
                 macro.stopMacro();
                 mRobot.sendCommand(new RollCommand(0, 0.0f, RollCommand.State.STOP));
 
+                //True, so popups won't be display at the end of the macro delay
                 macroStopped = true;
+
                 //Enable scan
                 switchButtonState(scanButton, true);
+                //Disable stop
+                switchButtonState(stopButton, false);
                 break;
+            }
+            case R.id.scan: {
+                //We will start an other macro, so this is no more true
+                macroStopped = false;
+
+                //Start scan activity
+                Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                startActivityForResult(myIntent, 1);
             }
         }
     }
@@ -428,7 +405,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
                 //Disable buttons
                 switchButtonState(scanButton, false);
-                switchButtonState(goButton, false);
                 switchButtonState(stopButton, false);
             }
 
@@ -471,8 +447,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 mRobot.calibrating(false);
 
                 //Enable buttons
-                switchButtonState(goButton, true);
-                switchButtonState(stopButton, true);
+                switchButtonState(scanButton, true);
             }
         });
         // Like the joystick, turn this off until a robot connects.
@@ -486,7 +461,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     }
 
     /**
-     * unlock scan when macro end
+     * unlock scan when macro end and lock stop
      * @param delay
      */
     public void unlockScanAfterMacroEnd(int delay) {
@@ -495,10 +470,16 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             public void run() {
                 //Enable scan
                 switchButtonState(scanButton, true);
+                switchButtonState(stopButton, false);
             }
         }, (delay + delay));
     }
 
+    /**
+     * Switch button state (enable or disable)
+     * @param button
+     * @param state
+     */
     public void switchButtonState(Button button, boolean state){
 
         if(state) {
@@ -515,41 +496,38 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     //===============================================
 
     /**
-     * update when the server answer
+     * update when the server answer after we ask a direction
      * @param observable
      * @param o
      */
     @Override
     public void update(Observable observable, Object o) {
 
-        Log.i("Sphero", "Update !");
-
         JSONArray directions;
         JSONObject instruction;
+        float speed; int direction; int delay; int delayTotal = 0;
+        boolean finish; String stairs;
 
-        float speed;
-        int direction;
-        int delay;
-        int delayTotal = 0;
-
-        boolean finish;
-        String stairs;
-
-        //get the direction JSON
+        //get the direction JSON and the finish var
         jsonObject = client.getDirections();
+        finish = client.isFinish();
 
+        //If we don't have object yet
         if(jsonObject==null) return;
+
+        Log.d("Sphero", "New direction !");
 
         //read the json
         try {
             directions = jsonObject.getJSONArray("directions");
+            //Get the next QRCodeID
             QRCodeID =  jsonObject.getInt("qrcodeId");
+
+            Log.i("Sphero", "Prochain QRCode : "+QRCodeID);
 
             macro = new MacroObject();
 
             for(int y = 0; y < directions.length(); y++) {
-                Log.i("Sphero", "Instructions locales : "+ y);
-
                 instruction = directions.getJSONObject(y);
 
                 if (instruction==null) return;
@@ -563,17 +541,19 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 macro.addCommand( new Delay(delay));
             }
 
-            //Stop
+            //Add a stop at the end of the macro
             macro.addCommand( new Roll(0.0f, 0, 0));
 
             //We check if the run is over
-            finish = jsonObject.getBoolean("finish");
             if(finish) {
                 Log.d("Sphero", "finished ! ");
                 macro.addCommand( new RGB(0, 255, 0, 10000));
                 macro.addCommand( new Delay( 10000 ) );
                 playSond(delayTotal, "R2D2_finish.mp3");
                 endPopup(delayTotal);
+            } else {
+                //unlock scan
+                unlockScanAfterMacroEnd(delayTotal);
             }
 
             //Check if we got stairs this time
@@ -591,11 +571,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             macro.setRobot( mRobot.getRobot() );
             macro.playMacro();
 
-            //unlock scan
-            if(!finish) {
-                unlockScanAfterMacroEnd(delayTotal);
-            }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -609,36 +584,67 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      * @param data
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        //Check codes...
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                // A contact was picked.  Here we will just display it
-                // to the user.
-                boolean dataBool = data.getBooleanExtra("data", false);
-                int QRCodeIDRevied = data.getIntExtra("index", -1);
 
-                if(dataBool && QRCodeIDRevied == QRCodeID) {
+                //Get data from intent return
+                boolean dataBool = data.getBooleanExtra("data", false);
+                int QRCodeIDRevied = data.getIntExtra("index", -2);
+
+                //Check if scan is OK and if the QRCode is the good one
+                //If the QRCode == -1, it's mean that it's the 1st we scan, so we enter in
+                Log.d("Sphero", "QRCodeID : "+QRCodeID + ", QRCodeIDRevied : "+QRCodeIDRevied);
+                Log.d("Sphero", "Point final : "+roomSelectedId+ ", "+QRCodeIDFromSelectedRoom);
+                if( (dataBool && QRCodeIDRevied == QRCodeID) || ( QRCodeID == -1)) {
 
                     //Disable scan
                     switchButtonState(scanButton, false);
+                    //Enable stop button
+                    switchButtonState(stopButton, true);
+
+                    //Check if the client is connected
+                    while(!client.isConnected());
 
                     //Run sphero
-                    Log.i("Sphero", "Instructions globales : " + dataStep);
-                    client.askDirection(roomSelectedId, String.valueOf(dataStep));
-                    dataStep++;
-                    Log.i("Sphero", "Etape : "+dataStep);
+                    Log.i("Sphero", "Chemin : "+String.valueOf(QRCodeIDRevied) + " "+ String.valueOf(QRCodeIDFromSelectedRoom));
+                    if(QRCodeIDFromSelectedRoom != -1) {
+
+                        //Only the 1st time
+                        if(QRCodeID == -1) {
+                            //Disable calibration button
+                            _calibrationView.setEnabled(false);
+                            _calibrationButtonView.setAlpha(0.5f);
+                            _calibrationButtonView.setClickable(false);
+
+                            //Play a sound
+                            playSond(0, "R2D2Scream.mp3");
+                        }
+
+                        client.askDirection(String.valueOf(QRCodeIDRevied), String.valueOf(QRCodeIDFromSelectedRoom));
+                        //TODO faire un truc si la direction n'existe pas
+                    } else {
+                        Log.e("Sphero", "Cette salle n'a pas de QRCodeID !");
+                        Toast.makeText(getApplicationContext(), "Oups ! Nous ne pouvons pas encore aller dans cette salle.", Toast.LENGTH_LONG).show();
+                    }
 
                     scanButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                            //myIntent.putExtra("id", dataStep);
-                            startActivityForResult(myIntent, 1);
+                        //We will start an other macro, so this is no more true
+                        macroStopped = false;
+
+                        //Start scan activity
+                        Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
+                        startActivityForResult(myIntent, 1);
                         }
                     });
-
                 } else {
                     Toast.makeText(getApplicationContext(), "Vous n'avez pas scanné le bon QRCode pour le parcours sélectionné. Etes-vous perdu ? ", Toast.LENGTH_LONG).show();
+                    //TODO Bouton je suis perdu !
                 }
+
             }
 
         }
@@ -649,7 +655,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     //===============================================
 
     /**
-     * finish sound
+     * Play a sound with a delay
      * @param delay
      */
     public void playSond(int delay, final String soundFile) {
@@ -715,7 +721,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     image.getLayoutParams().width = (int) (190 * scale);
                     image.requestLayout();
 
-                    //popup
+                    //popup params
                     AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
                     alertDialog.setTitle("Attention un escalier !");
                     alertDialog.setMessage(popUpMessage);
@@ -728,6 +734,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                                 }
                             });
 
+                    //show popup
                     alertDialog.show();
 
                     //Center the text
@@ -771,7 +778,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 image.getLayoutParams().width = (int) (width * scale);
                 image.requestLayout();
 
-                //popup
+                //popup params
                 AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
                 alertDialog.setTitle(title);
                 alertDialog.setMessage(text);
@@ -783,7 +790,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                                 //nothing, just close automatically
                             }
                         });
+                //To avoid double popup problem
                 try {
+                    //Show popup
                     alertDialog.show();
                 }
                 catch (Exception e) {
@@ -828,7 +837,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             public void run() {
 
                 if(!macroStopped) {
-                    //popup
+                    //popup params
                     AlertDialog alertDialog = new AlertDialog.Builder(Sphero.this).create();
                     alertDialog.setTitle("Fin du parcours !");
                     alertDialog.setMessage("Vous êtes arrivé à destination.");
@@ -840,6 +849,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                                 }
                             });
 
+                    //show popup
                     alertDialog.show();
 
                     //Center the text
@@ -875,6 +885,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
     @Override
     protected void onStop() {
+        //We don't play this code anymore, so we can scan in the activity without being disconnected
+
         //If the DiscoveryAgent is in discovery mode, stop it.
         /*
         if( DualStackDiscoveryAgent.getInstance().isDiscovering() ) {
@@ -887,25 +899,20 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             mRobot = null;
         }
         */
-        Log.i("Sphero", "onStop");
+        //Log.i("Sphero", "onStop");
         super.onStop();
-
     }
 
     @Override
     protected void onPause() {
-
-        Log.i("Sphero", "onPause");
+        //Log.i("Sphero", "onPause");
         super.onPause();
-
     }
 
     @Override
     protected void onResume() {
-
-        Log.i("Sphero", "onResume");
+        //Log.i("Sphero", "onResume");
         super.onResume();
-
     }
 
 

@@ -93,9 +93,15 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         //Write the room selected on the file
                         String[] roomName = array.get(i).split(" - ");
 
+                        String qrcodeId = "-1";
+                        //Check if the 3rd param exist, else we keep -1
+                        if(rooms.get(roomName[0]).size() > 3) {
+                            qrcodeId = rooms.get(roomName[0]).get(3);
+                        }
+
                         try {
-                            //nom;x-y;étage;(1 ou 2)
-                            Utils.writeToFile(roomName[0]+";"+ rooms.get(roomName[0]).get(2) + ";" + rooms.get(roomName[0]).get(0) + ";", "RoomSelected.txt");
+                            //nom;x-y;étage;(1 ou 2)qrcodeId;
+                            Utils.writeToFile(roomName[0]+";"+ rooms.get(roomName[0]).get(2) + ";" + rooms.get(roomName[0]).get(0) + ";" + qrcodeId +";", "RoomSelected.txt");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

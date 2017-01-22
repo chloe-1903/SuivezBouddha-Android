@@ -26,13 +26,13 @@
         app:calibration_center_y = "-60dp"/>
 
     <Button
-        android:text="Go"
+        android:text="Scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:background="@drawable/button"
         android:textColor="@color/white"
-        android:id="@+id/go"
+        android:id="@+id/scan"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -48,21 +48,9 @@ anywhere in your application's page -->
         android:background="@drawable/button"
         android:textColor="@color/white"
         android:layout_marginTop="22dp"
-        android:layout_below="@+id/go"
-        android:layout_alignLeft="@+id/go"
-        android:layout_alignStart="@+id/go" />
-
-    <Button
-        android:text="Scan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/scan"
-        android:background="@drawable/button"
-        android:textColor="@color/white"
-        android:layout_marginTop="25dp"
-        android:layout_below="@+id/stop"
-        android:layout_alignLeft="@+id/stop"
-        android:layout_alignStart="@+id/stop" />
+        android:layout_below="@+id/scan"
+        android:layout_alignLeft="@+id/scan"
+        android:layout_alignStart="@+id/scan" />
 
     <com.orbotix.calibration.api.CalibrationView
         android:id="@+id/calibrationView"
