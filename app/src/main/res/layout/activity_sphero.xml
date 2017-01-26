@@ -61,4 +61,16 @@ anywhere in your application's page -->
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <Button
+        android:text="Je suis perdu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/perdu"
+        android:background="@drawable/button"
+        android:textColor="@color/white"
+        android:layout_marginTop="22dp"
+        android:layout_below="@+id/stop"
+        android:layout_alignLeft="@+id/stop"
+        android:layout_alignStart="@+id/stop" />
+
 </RelativeLayout>
