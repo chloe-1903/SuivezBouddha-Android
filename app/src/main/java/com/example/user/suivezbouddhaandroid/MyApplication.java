@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
+import com.estimote.sdk.location.EstimoteLocation;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,9 +35,6 @@ public class MyApplication extends Application {
         beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
             @Override
             public void onEnteredRegion(Region region, List<Beacon> list) {
-                /*showNotification(
-                        "FLASH INFO",
-                        "Vous entrez dans la zone du beacon.");*/
                 targetRoom = Utils.readFile("RoomSelected.txt");
                 String[] roomSelectedIdTab = targetRoom.split(";");
                 targetRoom = roomSelectedIdTab[0];
@@ -44,6 +42,7 @@ public class MyApplication extends Application {
                 // Vibrate for 500 milliseconds
                 v.vibrate(500);
                 Toast.makeText(getApplicationContext(), "Vous êtes en salle " + targetRoom + ".", Toast.LENGTH_LONG).show();
+                beaconManager.stopMonitoring(region);
             }
             @Override
             public void onExitedRegion(Region region) {
@@ -51,11 +50,8 @@ public class MyApplication extends Application {
             }
         });
 
-        // scan every second ; default value for wait time
-        beaconManager.setBackgroundScanPeriod(1000, 25000);
-
-        // update every 3 second
-        beaconManager.setRegionExitExpiration(3000);
+        // scan every 0.2 seconds
+        beaconManager.setBackgroundScanPeriod(200, 0);
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
@@ -69,7 +65,7 @@ public class MyApplication extends Application {
 
     }
 
-    public void showNotification(String title, String message) {
+    /*public void showNotification(String title, String message) {
         Intent notifyIntent = new Intent(this, MainActivity.class);
         notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,
@@ -85,7 +81,6 @@ public class MyApplication extends Application {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
-    }
-
+    }*/
 
 }
