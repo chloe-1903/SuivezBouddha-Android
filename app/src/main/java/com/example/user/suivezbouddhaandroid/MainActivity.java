@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
                             roomName = num;
                             Log.d("QRCODE Test : ","in equals");
                         }
-                        Log.d("QRCODE Test - parcouru ", rooms.get(num).get(3));
+                        Log.d("QRCODE Test - parcouru ", rooms.get(num).get(2));
                     }
                     if (roomInfo.isEmpty() && dat!=10) {//si dat==10, la salle n'a pas été configurée (on peut pas y aller)
                         Toast.makeText(getApplicationContext(), "Ce QRCode ne correspond à aucune salle", Toast.LENGTH_LONG).show();
