@@ -52,7 +52,7 @@ public class Client extends Observable {
         mSocket.on("message", onMessage);
         mSocket.on("newPosition", onNewPosition);
         mSocket.on("newDirection", onNewDirection);
-        mSocket.on("allRooms", onAllRooms);
+        mSocket.on("roomWithEvent", onAllRooms);
     }
 
     private Emitter.Listener onConnect = new Emitter.Listener() {
@@ -124,17 +124,16 @@ public class Client extends Observable {
                 jsonAnswer = new JSONArray(args[0].toString());
                 rooms = new HashMap<>();
                 for (int i = 0; i< jsonAnswer.length(); i++) {
-                    JSONObject jsonFloor = jsonAnswer.getJSONObject(i);
-                    JSONArray jsonRooms = jsonFloor.getJSONArray("rooms");
-                    for (int k = 0; k< jsonRooms.length() ; k++)
+                    JSONArray jsonFloor = jsonAnswer.getJSONArray(i); //ensemble des salles de l'étage
+                    for (int k = 0; k< jsonFloor.length() ; k++)
                     {
                         ArrayList<String> salleInfos = new ArrayList<>();
                         salleInfos.add(0, Integer.toString(i+1)); //etage
-                        JSONObject jsonRoom = jsonRooms.getJSONObject(k);
-                        salleInfos.add(1,jsonRoom.getString("activity")); //Activité à faire dans la salle
-                        salleInfos.add(2,jsonRoom.getString("positionAndroid"));
+                        JSONObject jsonRoom = jsonFloor.getJSONObject(k);
+                       // salleInfos.add(1,jsonRoom.getString("activity")); //Activité à faire dans la salle
+                        salleInfos.add(1,jsonRoom.getString("positionAndroid"));
                         //if(jsonRoom.has("qrcodeId")) //Check if exist and then put it in salleInfos
-                            salleInfos.add(3,jsonRoom.getString("qrcodeId"));
+                            salleInfos.add(2,jsonRoom.getString("qrcodeId"));
                         Log.d("-> Salle :",jsonRoom.getString("number")+ "-"+ jsonRoom.getString("activity") + "-"+ jsonRoom.getString("activity"));
                         rooms.put(jsonRoom.getString("number"), salleInfos);
                     }
@@ -194,7 +193,7 @@ public class Client extends Observable {
         if (isConnected)
         {
             Log.d("->","---------> Asking for all rooms");
-            mSocket.emit("askAllRooms");
+            mSocket.emit("getRoomWithEvent");
         }
     }
 

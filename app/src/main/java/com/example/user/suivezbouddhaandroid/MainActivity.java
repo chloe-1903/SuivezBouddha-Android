@@ -86,8 +86,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
         final ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
         array = new ArrayList<>();
         for(String num : rooms.keySet()) {
-           if (!rooms.get(num).get(1).equals(""))//S'il y a une activité dans la salle, on l'affiche
-                array.add(num + " - "+ rooms.get(num).get(1));
+            array.add(num);
            // Log.d("->salle"," ListItem " + num + " - "+ rooms.get(num).get(1) );
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , array);
@@ -102,16 +101,10 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         //Write the room selected on the file
                         String[] roomName = array.get(i).split(" - ");
 
-                       // String qrcodeId = "-1";
-                        //Check if the 3rd param exist, else we keep -1
-                        /*if(rooms.get(roomName[0]).size() > 3) {
-                            qrcodeId = rooms.get(roomName[0]).get(3);
-                        }*/
-
                         try {
                             //nom;x-y;étage;(1 ou 2)qrcodeId;
                             //nom - android pos - étage - qr code
-                            Utils.writeToFile(roomName[0]+";"+ rooms.get(roomName[0]).get(2) + ";" + rooms.get(roomName[0]).get(0) + ";" + rooms.get(roomName[0]).get(3) +";", "RoomSelected.txt");
+                            Utils.writeToFile(roomName[0]+";"+ rooms.get(roomName[0]).get(1) + ";" + rooms.get(roomName[0]).get(0) + ";" + rooms.get(roomName[0]).get(2) +";", "RoomSelected.txt");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -150,8 +143,8 @@ public class MainActivity extends AppCompatActivity implements Observer{
                     }
                     try {
                         //nom - android pos - étage - qr code
-                        Utils.writeToFile(roomName + ";" + roomInfo.get(2) + ";" + roomInfo.get(0) +";" + roomInfo.get(3) +";", "RoomSelected.txt");
-                        Log.d("QRCODE Test txt : ", roomName + ";" + roomInfo.get(2) + ";" + roomInfo.get(0) +";" + roomInfo.get(3) +";");
+                        Utils.writeToFile(roomName + ";" + roomInfo.get(1) + ";" + roomInfo.get(0) +";" + roomInfo.get(2) +";", "RoomSelected.txt");
+                        Log.d("QRCODE Test txt : ", roomName + ";" + roomInfo.get(1) + ";" + roomInfo.get(0) +";" + roomInfo.get(2) +";");
                         Intent myIntent = new Intent(getApplicationContext(), Menu.class);
                         startActivity(myIntent);
                     } catch (IOException e) {
