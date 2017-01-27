@@ -23,7 +23,7 @@ import io.socket.emitter.Emitter;
 public class Client extends Observable {
     private Socket mSocket;
     private Boolean isConnected;
-    private final String serverAddress = "http://192.168.1.78:8080/";//http://10.212.109.188:8080/
+    private final String serverAddress = "http://10.212.111.29:8080/";//http://10.212.109.188:8080/
     private String message ;
     private JSONObject position;
     private JSONObject directions;
@@ -41,7 +41,7 @@ public class Client extends Observable {
         try {
             position.put("id", new Integer(0));
             position.put("position", "0-0");
-            position.put("floor", new Integer(0));
+            position.put("floor", new Integer(1));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -133,9 +133,9 @@ public class Client extends Observable {
                         JSONObject jsonRoom = jsonRooms.getJSONObject(k);
                         salleInfos.add(1,jsonRoom.getString("activity")); //Activité à faire dans la salle
                         salleInfos.add(2,jsonRoom.getString("positionAndroid"));
-                        if(jsonRoom.has("qrcodeId")) //Check if exist and then put it in salleInfos
-                        salleInfos.add(3,jsonRoom.getString("qrcodeId"));
-                        Log.d("-> Salle :",jsonRoom.getString("number")+ "-"+ jsonRoom.getString("activity"));
+                        //if(jsonRoom.has("qrcodeId")) //Check if exist and then put it in salleInfos
+                            salleInfos.add(3,jsonRoom.getString("qrcodeId"));
+                        Log.d("-> Salle :",jsonRoom.getString("number")+ "-"+ jsonRoom.getString("activity") + "-"+ jsonRoom.getString("activity"));
                         rooms.put(jsonRoom.getString("number"), salleInfos);
                     }
                 }

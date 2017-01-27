@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements Observer{
             StrictMode.setThreadPolicy(policy);
         }
 
-
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm.getActiveNetworkInfo() == null) {
             TextView textView = (TextView) findViewById(R.id.mainTextView);
@@ -64,6 +64,15 @@ public class MainActivity extends AppCompatActivity implements Observer{
         client = new Client();
         client.addObserver(this);
         client.connect();
+
+        Button scanButton = (Button)findViewById(R.id.scanButtonMain);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ScanActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
     }
 
     @Override
@@ -93,15 +102,16 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         //Write the room selected on the file
                         String[] roomName = array.get(i).split(" - ");
 
-                        String qrcodeId = "-1";
+                       // String qrcodeId = "-1";
                         //Check if the 3rd param exist, else we keep -1
-                        if(rooms.get(roomName[0]).size() > 3) {
+                        /*if(rooms.get(roomName[0]).size() > 3) {
                             qrcodeId = rooms.get(roomName[0]).get(3);
-                        }
+                        }*/
 
                         try {
                             //nom;x-y;étage;(1 ou 2)qrcodeId;
-                            Utils.writeToFile(roomName[0]+";"+ rooms.get(roomName[0]).get(2) + ";" + rooms.get(roomName[0]).get(0) + ";" + qrcodeId +";", "RoomSelected.txt");
+                            //nom - android pos - étage - qr code
+                            Utils.writeToFile(roomName[0]+";"+ rooms.get(roomName[0]).get(2) + ";" + rooms.get(roomName[0]).get(0) + ";" + rooms.get(roomName[0]).get(3) +";", "RoomSelected.txt");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -112,6 +122,43 @@ public class MainActivity extends AppCompatActivity implements Observer{
                 });
             }
         });
+    }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                int dat = data.getIntExtra("index", -1);
+                Log.d("QRCODE Test -Scanné:", ""+dat);
+
+                String temp = Integer.toString(dat);
+                Log.d("debug", temp);
+
+                if(dat != -1 && rooms!=null) {
+                    ArrayList<String> roomInfo = new ArrayList<>();
+                    String roomName = "";
+                    for(String num : rooms.keySet()) {
+                        if (!rooms.get(num).get(3).equals("") && Integer.valueOf(rooms.get(num).get(3))==dat) { //si la salle a un qrcode=celui que l'on vient de scanner
+                            roomInfo = rooms.get(num);
+                            roomName = num;
+                            Log.d("QRCODE Test : ","in equals");
+                        }
+                        Log.d("QRCODE Test - parcouru ", rooms.get(num).get(3));
+                    }
+                    if (roomInfo.isEmpty()) {
+                        Toast.makeText(getApplicationContext(), "Ce QR code ne correspond à aucune salle", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    try {
+                        //nom - android pos - étage - qr code
+                        Utils.writeToFile(roomName + ";" + roomInfo.get(2) + ";" + roomInfo.get(0) +";" + roomInfo.get(3) +";", "RoomSelected.txt");
+                        Log.d("QRCODE Test txt : ", roomName + ";" + roomInfo.get(2) + ";" + roomInfo.get(0) +";" + roomInfo.get(3) +";");
+                        Intent myIntent = new Intent(getApplicationContext(), Menu.class);
+                        startActivity(myIntent);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }

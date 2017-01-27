@@ -21,12 +21,20 @@
 
     <ListView
         android:layout_width="300dp"
-        android:layout_height="420dp"
+        android:layout_height="380dp"
         android:background="@color/colorPrimary"
         android:choiceMode="singleChoice"
-        android:layout_marginTop="20dp"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/listRoomsView" />
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Scanner un QR code"
+        android:background="@drawable/button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/scanButtonMain" />
 
 </RelativeLayout>
