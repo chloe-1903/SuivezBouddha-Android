@@ -97,6 +97,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private boolean iAmLost = false;
     private boolean discoveryFailed = false;
 
+    // the first scan to perform
+    private boolean first = true;
+
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
 
     @Override
@@ -394,12 +397,18 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             case R.id.scan: {
                 //Start scan activity
                 Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                startActivityForResult(myIntent, 1);
                 try {
-                    myIntent.putExtra("arrowDir", jsonObject.getString("arrowDir"));
+                    if (first) {
+                        myIntent.putExtra("arrowDir", "none");
+                        first = false;
+                    } else {
+                        myIntent.putExtra("arrowDir", jsonObject.getString("arrow"));
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                startActivityForResult(myIntent, 1);
+
                 break;
             }
             case R.id.perdu: {

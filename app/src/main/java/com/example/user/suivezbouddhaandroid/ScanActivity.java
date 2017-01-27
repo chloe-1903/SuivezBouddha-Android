@@ -105,7 +105,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
             Manifest.permission.INTERNET
     };
 
-    protected String arrowDir = "";
+    private String arrowDir;
 
     //private int idStep;
 
@@ -140,8 +140,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
 
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
                 "droid");
-        Intent intent = getIntent();
-        arrowDir = intent.getStringExtra("arrowDir");
+        arrowDir = "";
     }
 
     // Process Single Tap event to trigger autofocus
@@ -207,6 +206,10 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
             mGlView.setVisibility(View.VISIBLE);
             mGlView.onResume();
         }
+
+        Intent intent = getIntent();
+        arrowDir = intent.getStringExtra("arrowDir");
+        System.out.println("arrowDir dans scan activity : " + arrowDir);
 
     }
 

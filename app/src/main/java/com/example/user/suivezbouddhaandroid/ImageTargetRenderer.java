@@ -445,17 +445,11 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             GLES20.glUseProgram(shaderProgramID);
 
             if (!mActivity.isExtendedTrackingActive()) {
-                if (trackable.getName().equalsIgnoreCase("QRCode_6")) {
-                    GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                            false, 0, mLArrow.getVertices());
-                    GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                            GLES20.GL_FLOAT, false, 0, mLArrow.getTexCoords());
-                } else {
-                    GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                            false, 0, mArrow.getVertices());
-                    GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                            GLES20.GL_FLOAT, false, 0, mArrow.getTexCoords());
-                }
+
+                GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                        false, 0, mArrow.getVertices());
+                GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                        GLES20.GL_FLOAT, false, 0, mArrow.getTexCoords());
 
                 GLES20.glEnableVertexAttribArray(vertexHandle);
                 GLES20.glEnableVertexAttribArray(textureCoordHandle);
@@ -489,6 +483,10 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                         break;
                     case "front-left":
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mFLArrow.getNumObjectVertex());
+                        break;
+                    case "none":
+                        break;
+                    default:
                         break;
 
                 }
