@@ -83,8 +83,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private RobotChangedStateNotificationType typeGlobal;
     private MacroObject macro;
 
-    private Context context;
-
     private Client client;
     private JSONObject jsonObject;
     private String popUpMessage;
@@ -107,7 +105,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         setContentView(R.layout.activity_sphero);
 
         assets = getAssets();
-        context = this.getApplicationContext();
 
         /*
             Associate a listener for robot state changes with the DualStackDiscoveryAgent.
@@ -149,6 +146,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         //Init buttons
         initViews();
 
+        //init mediaPlayer
         mp = new MediaPlayer();
 
         //Store data from the file into variables
@@ -497,7 +495,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     }
 
     /**
-     * unlock scan when macro end and lock stop
+     * Unlock scan when macro end and lock stop
      * @param delay
      */
     public void unlockScanAfterMacroEnd(int delay) {
@@ -532,7 +530,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     //===============================================
 
     /**
-     * update when the server answer after we ask a direction
+     * Update when the server answer after we ask a direction
      * @param observable
      * @param o
      */
@@ -563,6 +561,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
             macro = new MacroObject();
 
+            //Add instructions to the macro
             for(int y = 0; y < directions.length(); y++) {
                 instruction = directions.getJSONObject(y);
 
@@ -781,7 +780,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     messageText.setGravity(Gravity.CENTER);
 
                     //Vibration
-                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(500);
                 }
                 else {
@@ -790,7 +789,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             }
         }, (delay + delay));
     }
-
 
     /**
      * Classic popup with image
@@ -862,7 +860,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         imgPopup("Instructions", message, R.drawable.calibration, 166, 158);
 
         //Pop 1
-        message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par tapper deux fois la sphère et positionnez la sur la pastille rouge du point de départ.";
+        message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
         imgPopup("Instructions", message, R.drawable.pastille2, 189, 190);
     }
 

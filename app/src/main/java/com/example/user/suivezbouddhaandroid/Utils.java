@@ -19,6 +19,12 @@ import java.util.HashMap;
 
 public class Utils {
 
+    /**
+     * Write to a file in download directory
+     * @param data
+     * @param fileName
+     * @throws IOException
+     */
     public static void writeToFile(String data, String fileName) throws IOException {
 
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
@@ -35,6 +41,11 @@ public class Utils {
     }
 
 
+    /**
+     * Read the file in download directory
+     * @param FileName
+     * @return
+     */
     public static String readFile(String FileName) {
 
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
