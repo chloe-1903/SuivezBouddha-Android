@@ -38,6 +38,10 @@ import vuforia.utils.SampleApplication3DModel;
 import vuforia.utils.SampleUtils;
 import vuforia.utils.Arrow;
 import vuforia.utils.Texture;
+import vuforia.utils.models.BackArrow;
+import vuforia.utils.models.BackLeftArrow;
+import vuforia.utils.models.FrontLeftArrow;
+import vuforia.utils.models.FrontRightArrow;
 
 import java.io.IOException;
 import java.util.Vector;
@@ -61,6 +65,10 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
     
     private Arrow mArrow;
     private LeftArrow mLArrow;
+    private BackArrow mBArrow;
+    private BackLeftArrow mBLArrow;
+    private FrontLeftArrow mFLArrow;
+    private FrontRightArrow mFRArrow;
     
     private float kBuildingScale = 2.0f;
     private SampleApplication3DModel mBuildingsModel;
@@ -171,6 +179,10 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
         if(!mModelIsLoaded) {
             mArrow = new Arrow();
             mLArrow = new LeftArrow();
+            mBArrow = new BackArrow();
+            mBLArrow = new BackLeftArrow();
+            mFLArrow = new FrontLeftArrow();
+            mFRArrow = new FrontRightArrow();
 
             try {
                 mBuildingsModel = new SampleApplication3DModel();
@@ -379,10 +391,26 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                         modelViewProjection, 0);
 
                 // finally draw the teapot
-                if (trackable.getName().equalsIgnoreCase("QRCode_6")) {
-                    GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mLArrow.getNumObjectVertex());
-                } else {
-                    GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mArrow.getNumObjectVertex());
+                switch(mActivity.getArrowDir()) {
+                    case "left":
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mLArrow.getNumObjectVertex());
+                        break;
+                    case "right":
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mArrow.getNumObjectVertex());
+                        break;
+                    case "back":
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mBArrow.getNumObjectVertex());
+                        break;
+                    case "back-left":
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mBLArrow.getNumObjectVertex());
+                        break;
+                    case "front-right":
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mFRArrow.getNumObjectVertex());
+                        break;
+                    case "front-left":
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mFLArrow.getNumObjectVertex());
+                        break;
+
                 }
 
                 // disable the enabled arrays

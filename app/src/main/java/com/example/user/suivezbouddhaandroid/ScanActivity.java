@@ -18,6 +18,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -104,6 +105,8 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
             Manifest.permission.INTERNET
     };
 
+    protected String arrowDir = "";
+
     //private int idStep;
 
 
@@ -137,6 +140,8 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
 
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
                 "droid");
+        Intent intent = getIntent();
+        arrowDir = intent.getStringExtra("arrowDir");
     }
 
     // Process Single Tap event to trigger autofocus
@@ -529,6 +534,10 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
 
     boolean isExtendedTrackingActive() {
         return mExtendedTracking;
+    }
+
+    public String getArrowDir() {
+        return arrowDir;
     }
 
 }

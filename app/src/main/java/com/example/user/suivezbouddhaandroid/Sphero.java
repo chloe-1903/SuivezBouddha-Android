@@ -406,7 +406,11 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 //Start scan activity
                 Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
                 startActivityForResult(myIntent, 1);
-
+                try {
+                    myIntent.putExtra("arrowDir", jsonObject.getString("arrowDir"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
         }
