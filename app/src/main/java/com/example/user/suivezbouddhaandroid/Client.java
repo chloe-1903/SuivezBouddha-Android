@@ -28,7 +28,8 @@ public class Client extends Observable {
     private JSONObject position;
     private JSONObject directions;
     private boolean finish;
-    private HashMap<String, ArrayList<String>> rooms;
+    //private HashMap<String, ArrayList<String>> rooms;
+    private JSONArray rooms;
 
     public Client(){
         isConnected = false;
@@ -122,20 +123,7 @@ public class Client extends Observable {
             JSONArray jsonAnswer = null;
             try {
                 jsonAnswer = new JSONArray(args[0].toString());
-                rooms = new HashMap<>();
-                for (int i = 0; i< jsonAnswer.length(); i++) {
-                    JSONArray jsonFloor = jsonAnswer.getJSONArray(i); //ensemble des salles de l'étage
-                    for (int k = 0; k< jsonFloor.length() ; k++)
-                    {
-                        ArrayList<String> salleInfos = new ArrayList<>();
-                        salleInfos.add(0, Integer.toString(i+1)); //etage
-                        JSONObject jsonRoom = jsonFloor.getJSONObject(k);
-                        salleInfos.add(1,jsonRoom.getString("positionAndroid"));
-                        salleInfos.add(2,jsonRoom.getString("qrcodeId"));
-                        Log.d("-> Salle :",jsonRoom.getString("number")+ "-"+ jsonRoom.getString("activity") + "-"+ jsonRoom.getString("activity"));
-                        rooms.put(jsonRoom.getString("number"), salleInfos);
-                    }
-                }
+                rooms = jsonAnswer;
                 setChanged();
                 notifyObservers();
                 clearChanged();
@@ -200,7 +188,7 @@ public class Client extends Observable {
         mSocket.connect();
     }
 
-    public HashMap<String, ArrayList<String>> getRooms(){ return rooms;}
+    public JSONArray getRooms(){ return rooms;}
 
     public boolean isConnected() { return isConnected;}
 

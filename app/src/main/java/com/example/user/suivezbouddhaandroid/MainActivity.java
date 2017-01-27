@@ -23,6 +23,10 @@ import android.widget.Toast;
 
 import com.estimote.sdk.SystemRequirementsChecker;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +36,7 @@ import java.util.Observer;
 public class MainActivity extends AppCompatActivity implements Observer{
     private Client client;
     private Utils utils;
-    private HashMap<String, ArrayList<String>> rooms;
+    private JSONArray rooms;
     private ArrayList<String> array;
 
     private static final String[] PERMS = {
@@ -85,9 +89,18 @@ public class MainActivity extends AppCompatActivity implements Observer{
         //notify de onNewPosition
         final ListView listRoomsView = (ListView) findViewById(R.id.listRoomsView);
         array = new ArrayList<>();
-        for(String num : rooms.keySet()) {
-            array.add(num);
-           // Log.d("->salle"," ListItem " + num + " - "+ rooms.get(num).get(1) );
+        for (int i = 0; i< rooms.length(); i++) {
+            JSONArray jsonFloor = null; //ensemble des salles de l'étage
+            try {
+                jsonFloor = rooms.getJSONArray(i);
+                for (int k = 0; k< jsonFloor.length() ; k++)
+                {
+                    JSONObject jsonRoom = jsonFloor.getJSONObject(k);
+                    array.add(jsonRoom.getString("number"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , array);
         runOnUiThread(new Runnable() {
@@ -97,16 +110,31 @@ public class MainActivity extends AppCompatActivity implements Observer{
                 listRoomsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                         //Write the room selected on the file
-                        String[] roomName = array.get(i).split(" - ");
+                        String roomName = array.get(i);
 
                         try {
-                            //nom;x-y;étage;(1 ou 2)qrcodeId;
+                            String androidPos = "";
+                            String floor = "";
+                            String qrcode = "";
+                            for (int j = 0; j< rooms.length(); j++) {
+                                JSONArray jsonFloor = rooms.getJSONArray(j);
+                                for (int k = 0; k < jsonFloor.length(); k++) {
+                                    JSONObject jsonRoom = jsonFloor.getJSONObject(k);
+                                    if(jsonRoom.getString("number").equals(roomName)){
+                                        androidPos = jsonRoom.getString("positionAndroid");
+                                        floor = Integer.toString(j+1);
+                                        qrcode = jsonRoom.getString("qrcodeId");
+                                    }
+                                }
+                            }
                             //nom - android pos - étage - qr code
-                            Utils.writeToFile(roomName[0]+";"+ rooms.get(roomName[0]).get(1) + ";" + rooms.get(roomName[0]).get(0) + ";" + rooms.get(roomName[0]).get(2) +";", "RoomSelected.txt");
+                            Log.d("debug salle :", roomName+";"+ androidPos + ";" + floor + ";" + qrcode+";");
+                            Utils.writeToFile(roomName+";"+ androidPos + ";" + floor + ";" + qrcode+";", "RoomSelected.txt");
                         } catch (IOException e) {
                             e.printStackTrace();
+                        } catch (JSONException e) {
+                        e.printStackTrace();
                         }
 
                         Intent myIntent = new Intent(getApplicationContext(), Menu.class);
@@ -121,34 +149,44 @@ public class MainActivity extends AppCompatActivity implements Observer{
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 int dat = data.getIntExtra("index", -1);
-                Log.d("QRCODE Test -Scanné:", ""+dat);
 
                 String temp = Integer.toString(dat);
                 Log.d("debug", temp);
 
+                if (dat == 10){//si dat==10, la salle n'a pas été configurée (on peut pas y aller)
+                    Toast.makeText(getApplicationContext(), "Cette salle n'a aucune présentation aujourd'hui", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 if(dat != -1 && rooms!=null) {
-                    ArrayList<String> roomInfo = new ArrayList<>();
-                    String roomName = "";
-                    for(String num : rooms.keySet()) {
-                        if (!rooms.get(num).get(2).equals("") && Integer.valueOf(rooms.get(num).get(2))==dat) { //si la salle a un qrcode=celui que l'on vient de scanner
-                            roomInfo = rooms.get(num);
-                            roomName = num;
-                            Log.d("QRCODE Test : ","in equals");
-                        }
-                        Log.d("QRCODE Test - parcouru ", rooms.get(num).get(2));
-                    }
-                    if (roomInfo.isEmpty() && dat!=10) {//si dat==10, la salle n'a pas été configurée (on peut pas y aller)
-                        Toast.makeText(getApplicationContext(), "Ce QRCode ne correspond à aucune salle", Toast.LENGTH_LONG).show();
-                        return;
-                    }
+                    Log.d("debug salle :", ""+dat);
                     try {
+                        String androidPos = "";
+                        String floor = "";
+                        String roomName = "";
+                        for (int j = 0; j< rooms.length(); j++) {
+                            JSONArray jsonFloor = rooms.getJSONArray(j);
+                            for (int k = 0; k < jsonFloor.length(); k++) {
+                                JSONObject jsonRoom = jsonFloor.getJSONObject(k);
+                                if(Integer.valueOf(jsonRoom.getString("qrcodeId"))==dat){
+                                    androidPos = jsonRoom.getString("positionAndroid");
+                                    floor = Integer.toString(j+1);
+                                    roomName = jsonRoom.getString("number");
+                                }
+                            }
+                        }
+                        if (roomName=="") {//on a pas trouvé la salle
+                            Toast.makeText(getApplicationContext(), "Cette salle n'a aucune présentation aujourd'hui", Toast.LENGTH_LONG).show();
+                            return;
+                        }
                         //nom - android pos - étage - qr code
-                        Utils.writeToFile(roomName + ";" + roomInfo.get(1) + ";" + roomInfo.get(0) +";" + roomInfo.get(2) +";", "RoomSelected.txt");
-                        Log.d("QRCODE Test txt : ", roomName + ";" + roomInfo.get(1) + ";" + roomInfo.get(0) +";" + roomInfo.get(2) +";");
+                        Log.d("debug salle :", roomName+";"+ androidPos + ";" + floor + ";" + dat+";");
+                        Utils.writeToFile(roomName+";"+ androidPos + ";" + floor + ";" + dat+";", "RoomSelected.txt");
                         Intent myIntent = new Intent(getApplicationContext(), Menu.class);
-                        Toast.makeText(getApplicationContext(), "Salle de destination enregistrée", Toast.LENGTH_LONG).show();
                         startActivity(myIntent);
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
