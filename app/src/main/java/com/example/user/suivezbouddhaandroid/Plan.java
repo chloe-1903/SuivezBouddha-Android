@@ -67,6 +67,7 @@ public class Plan extends AppCompatActivity implements Observer {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ScanActivity.class);
+                intent.putExtra("arrowDir", "none");
                 startActivityForResult(intent, 1);
             }
         });
