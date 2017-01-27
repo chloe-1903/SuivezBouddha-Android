@@ -130,10 +130,8 @@ public class Client extends Observable {
                         ArrayList<String> salleInfos = new ArrayList<>();
                         salleInfos.add(0, Integer.toString(i+1)); //etage
                         JSONObject jsonRoom = jsonFloor.getJSONObject(k);
-                       // salleInfos.add(1,jsonRoom.getString("activity")); //Activité à faire dans la salle
                         salleInfos.add(1,jsonRoom.getString("positionAndroid"));
-                        //if(jsonRoom.has("qrcodeId")) //Check if exist and then put it in salleInfos
-                            salleInfos.add(2,jsonRoom.getString("qrcodeId"));
+                        salleInfos.add(2,jsonRoom.getString("qrcodeId"));
                         Log.d("-> Salle :",jsonRoom.getString("number")+ "-"+ jsonRoom.getString("activity") + "-"+ jsonRoom.getString("activity"));
                         rooms.put(jsonRoom.getString("number"), salleInfos);
                     }

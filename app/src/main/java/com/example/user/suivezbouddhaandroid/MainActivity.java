@@ -130,14 +130,14 @@ public class MainActivity extends AppCompatActivity implements Observer{
                     ArrayList<String> roomInfo = new ArrayList<>();
                     String roomName = "";
                     for(String num : rooms.keySet()) {
-                        if (!rooms.get(num).get(3).equals("") && Integer.valueOf(rooms.get(num).get(3))==dat) { //si la salle a un qrcode=celui que l'on vient de scanner
+                        if (!rooms.get(num).get(2).equals("") && Integer.valueOf(rooms.get(num).get(2))==dat) { //si la salle a un qrcode=celui que l'on vient de scanner
                             roomInfo = rooms.get(num);
                             roomName = num;
                             Log.d("QRCODE Test : ","in equals");
                         }
                         Log.d("QRCODE Test - parcouru ", rooms.get(num).get(3));
                     }
-                    if (roomInfo.isEmpty()) {
+                    if (roomInfo.isEmpty() && dat!=10) {//si dat==10, la salle n'a pas été configurée (on peut pas y aller)
                         Toast.makeText(getApplicationContext(), "Ce QRCode ne correspond à aucune salle", Toast.LENGTH_LONG).show();
                         return;
                     }
