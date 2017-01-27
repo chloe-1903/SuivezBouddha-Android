@@ -41,6 +41,8 @@ public class Plan extends AppCompatActivity implements Observer {
     private String roomSelectedId;
     private String[] roomPosition;
     private int roomFloor;
+    private Bitmap bitmap;
+    private Bitmap tempBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +82,11 @@ public class Plan extends AppCompatActivity implements Observer {
             public void run() {
                 ImageView imageView = (ImageView) findViewById(R.id.img);
                 imageView.setImageResource(0);
-                Bitmap bitmap;
                 if (currentFloor == 2 )
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage1);
                 else
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planetage0);
-                Bitmap tempBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
+                tempBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
                 Canvas c = new Canvas(tempBitmap);
                 c.drawBitmap(bitmap, 0, 0, null);
                 Paint p = new Paint();
@@ -185,5 +186,18 @@ public class Plan extends AppCompatActivity implements Observer {
                 messageText.setGravity(Gravity.CENTER);
             }
         }, (0));
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        //Recycling bitmap to avoid out of memory
+        bitmap.recycle();
+        bitmap=null;
+
+        tempBitmap.recycle();
+        tempBitmap=null;
+
+        super.onDestroy();
     }
 }

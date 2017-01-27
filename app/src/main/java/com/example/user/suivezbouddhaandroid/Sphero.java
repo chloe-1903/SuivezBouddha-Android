@@ -717,7 +717,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     //===============================================
 
     /**
-     * The popup displayed when we got stairs + vribration
+     * The popup displayed when we got stairs + vibration
      * @param delay
      * @param direction
      */
@@ -839,21 +839,20 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      * Start instructions popups
      */
     public void instructionsPopup() {
-        //TODO changer les images et textes avec les nouveaux menus
         //Pop 4
-        String message = "Lorsque celle-ci s'arrêtera, il vous faudra scanner le QRCode le plus proche à l'aide du bouton \"SCAN\"";
+        String message = "Lorsque celle-ci s'arrêtera, il vous faudra scanner le QRCode le plus proche à l'aide du bouton \"SCAN\". Si vous êtes perdu, pas d'inquiétude, vous pourrez utiliser le bouton \"JE SUIS PERDU\".";
         imgPopup("Instructions", message, R.drawable.menu2, 77, 318);
 
         //Pop 3
-        message = "Une fois que Bouddha sera bien calibré, vous pourrez appuyer sur le bouton \"GO\" et vous commencerez à suivre la boule ! En cas de problème, vous pouvez toujours appuyer sur le bouton \"STOP\" pour arrêter la sphère.";
-        imgPopup("Instructions", message, R.drawable.menu, 166, 318);
+        message = "Une fois que Bouddha sera bien calibré, vous pourrez appuyer sur le bouton \"SCAN\" pour scanner le QRCode le plus proche et vous commencerez à suivre la boule ! En cas de problème, vous pouvez toujours appuyer sur le bouton \"STOP\" pour arrêter la sphère.";
+        imgPopup("Instructions", message, R.drawable.menu, 180, 318);
 
         //Pop 2
         message = "Une fois la boule positionnée et connectée, mettez-vous derrière la sphère et utilisez le bouton rond pour calibrer Bouddha comme sur l'image.";
         imgPopup("Instructions", message, R.drawable.calibration, 166, 158);
 
         //Pop 1
-        message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
+        message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par tapper deux fois la sphère et positionnez la sur la pastille rouge du point de départ.";
         imgPopup("Instructions", message, R.drawable.pastille2, 189, 190);
     }
 
@@ -942,7 +941,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
     @Override
     protected void onResume() {
-        //Log.i("Sphero", "onResume");
+        Log.i("Sphero", "onResume");
         super.onResume();
     }
 
