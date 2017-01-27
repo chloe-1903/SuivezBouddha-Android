@@ -62,7 +62,7 @@ import java.util.Observer;
 import java.util.Vector;
 
 
-public class ScanActivity extends Activity implements SampleApplicationControl, Observer {
+public class ScanActivity extends Activity implements SampleApplicationControl {
     private static final String LOGTAG = "ImageTargets";
 
     SampleApplicationSession vuforiaAppSession;
@@ -85,9 +85,6 @@ public class ScanActivity extends Activity implements SampleApplicationControl, 
     private boolean mFlash = false;
     private boolean mContAutofocus = false;
     private boolean mExtendedTracking = false;
-
-    private JSONObject jsonObject;
-    private Client client;
 
     private View mFlashOptionView;
 
@@ -135,26 +132,11 @@ public class ScanActivity extends Activity implements SampleApplicationControl, 
         mGestureDetector = new GestureDetector(this, new GestureListener());
 
         // Load any sample specific textures:
-        mTextures = new Vector<Texture>();
+        mTextures = new Vector<>();
         loadTextures();
 
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
                 "droid");
-
-        client = new Client();
-        client.addObserver(this);
-        client.connect();
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        //TODO
-        jsonObject = client.getDirections();
-        try {
-            String arrowDir = jsonObject.getString("arrow");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     // Process Single Tap event to trigger autofocus
