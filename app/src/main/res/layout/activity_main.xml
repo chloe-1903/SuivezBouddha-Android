@@ -29,16 +29,13 @@
         android:id="@+id/listRoomsView" />
 
     <Button
-        android:layout_width="150dp"
-        android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Scanner un QRCode"
         android:textColor="@color/white"
         android:background="@drawable/button"
-        android:layout_alignParentBottom="true"
         android:id="@+id/scanButtonMain"
-        android:layout_alignLeft="@+id/listRoomsView"
-        android:layout_alignStart="@+id/listRoomsView"
-        android:layout_alignRight="@+id/listRoomsView"
-        android:layout_alignEnd="@+id/listRoomsView" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
