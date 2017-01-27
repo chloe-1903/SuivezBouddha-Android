@@ -346,6 +346,86 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                 });
             }
 
+            if(trackable.getName().equalsIgnoreCase("QRCode_7")) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 7);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
+
+                            }
+                        }, 3000);
+                    }
+                });
+            }
+
+            if(trackable.getName().equalsIgnoreCase("QRCode_8")) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 8);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
+
+                            }
+                        }, 3000);
+                    }
+                });
+            }
+
+            if(trackable.getName().equalsIgnoreCase("QRCode_9")) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 9);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
+
+                            }
+                        }, 3000);
+                    }
+                });
+            }
+
+            if(trackable.getName().equalsIgnoreCase("QRCode_10")) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // display the arrow for 3s
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnIntent = new Intent();
+                                returnIntent.putExtra("data", dataBool = true);
+                                returnIntent.putExtra("index", i = 10);
+                                mActivity.setResult(Activity.RESULT_OK,returnIntent);
+                                mActivity.finish();
+
+                            }
+                        }, 3000);
+                    }
+                });
+            }
+
             // deal with the modelview and projection matrices
             float[] modelViewProjection = new float[16];
 
