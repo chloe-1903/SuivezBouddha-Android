@@ -4,15 +4,13 @@ package com.example.user.suivezbouddhaandroid;
  * Created by lucas on 16/12/16.
  */
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
@@ -35,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orbotix.ConvenienceRobot;
-import com.orbotix.DualStackDiscoveryAgent;
 import com.orbotix.calibration.api.CalibrationEventListener;
 import com.orbotix.calibration.api.CalibrationImageButtonView;
 import com.orbotix.calibration.api.CalibrationView;
@@ -49,7 +46,6 @@ import com.orbotix.common.RobotChangedStateListener;
 import com.orbotix.le.RobotLE;
 import com.orbotix.macro.MacroObject;
 import com.orbotix.macro.cmd.Delay;
-import com.orbotix.macro.cmd.Fade;
 import com.orbotix.macro.cmd.RGB;
 import com.orbotix.macro.cmd.Roll;
 
@@ -82,23 +78,28 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     private Button perduButton;
     private CalibrationView _calibrationView;
     private CalibrationImageButtonView _calibrationButtonView;
+
     private DiscoveryAgent _currentDiscoveryAgent;
+    private RobotChangedStateNotificationType typeGlobal;
+    private MacroObject macro;
+
+    private Context context;
+
     private Client client;
     private JSONObject jsonObject;
-    private AssetManager assets;
-    private MacroObject macro;
     private String popUpMessage;
-    private Context context;
     private String roomSelectedId;
     private int QRCodeIDFromSelectedRoom;
     private int QRCodeID = -1;
+
+    private AssetManager assets;
+    private MediaPlayer mp;
+
     private boolean macroStopped = false;
-    private  RobotChangedStateNotificationType typeGlobal;
     private boolean iAmLost = false;
+    private boolean discoveryFailed = false;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 42;
-
-    private final MediaPlayer mp = new MediaPlayer();
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -147,6 +148,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         //Init buttons
         initViews();
+
+        mp = new MediaPlayer();
 
         //Store data from the file into variables
         roomSelectedId = Utils.readFile("RoomSelected.txt");
@@ -255,16 +258,11 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         Toast.makeText(getApplicationContext(), String.valueOf(type), Toast.LENGTH_SHORT).show();
         switch( typeGlobal ) {
             case Online: {
+                //Instructions Popups
+                instructionsPopup();
 
                 _currentDiscoveryAgent.stopDiscovery();
                 _currentDiscoveryAgent.removeDiscoveryListener(this);
-
-                //Set buttons enable
-                switchButtonState(scanButton, true);
-                _calibrationView.setEnabled(true);
-                _calibrationButtonView.setAlpha(1f);
-                _calibrationButtonView.setEnabled(true);
-
 
                 //If robot uses Bluetooth LE, Developer Mode can be turned on.
                 //This turns off DOS protection. This generally isn't required.
@@ -284,34 +282,45 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 client.addObserver(this);
                 client.connect();
 
+                //Check if the client is connected
+                while(!client.isConnected());
+
+                //Set buttons enable
+                switchButtonState(scanButton, true);
+                _calibrationView.setEnabled(true);
+                _calibrationButtonView.setAlpha(1f);
+                _calibrationButtonView.setEnabled(true);
+
                 break;
             }
             case Connecting: {
                 break;
             }
             case Connected: {
-                //Instructions Popups
-                instructionsPopup();
 
-                /*
+                //If we stay in this states a too long moment, we try to reconnect it again
                 runOnUiThread(new Runnable() {
                     public void run() {
                         new CountDownTimer(5000, 5000) {
-                            public void onTick(long millisUntilFinished) {
-                            }
+                            public void onTick(long millisUntilFinished) {}
 
                             public void onFinish() {
                                 if (typeGlobal == Connected) {
                                     Log.i("Sphero", "Planté !");
-                                    //TODO Trouver comment relancer le tout proprement
-                                    //Un disconnect ne déconnecte pas vraiment la sphero...
-                                    //Desactiver le Bluetooth le fait, mais on ne peut plus le réactiver automatiquement...
+
+                                    //Disconnect and reconnect bluetooth
+                                    discoveryFailed = true;
+                                    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                                    Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+
+                                    bluetoothAdapter.disable();
+                                    startActivityForResult(intentBtEnabled, 0);
                                 }
                             }
                         }.start();
                     }
                 });
-                */
+
                 break;
             }
             case Disconnected: {
@@ -643,9 +652,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                             //Enable stop button
                             switchButtonState(stopButton, true);
 
-                            //Check if the client is connected
-                            while(!client.isConnected());
-
                             //Only the 1st time
                             if (QRCodeID == -1) {
                                 //Disable calibration button
@@ -848,7 +854,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         imgPopup("Instructions", message, R.drawable.menu, 180, 318);
 
         //Pop 2
-        message = "Une fois la boule positionnée et connectée, mettez-vous derrière la sphère et utilisez le bouton rond pour calibrer Bouddha comme sur l'image.";
+        message = "Une fois la boule positionnée et connectée, mettez-vous derrière la sphère et utilisez le bouton rond pour calibrer Bouddha comme sur l'image. Cette opération n'est a effectuer uniquement lors du premier départ à l'accueil.";
         imgPopup("Instructions", message, R.drawable.calibration, 166, 158);
 
         //Pop 1
@@ -942,6 +948,12 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     @Override
     protected void onResume() {
         Log.i("Sphero", "onResume");
+
+        //If the discovery failed, we start it again
+        if(discoveryFailed) {
+            startDiscovery();
+            discoveryFailed = false;
+        }
         super.onResume();
     }
 

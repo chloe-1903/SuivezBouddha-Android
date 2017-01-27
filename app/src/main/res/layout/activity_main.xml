@@ -31,10 +31,14 @@
     <Button
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:text="Scanner un QR code"
+        android:text="Scanner un QRCode"
+        android:textColor="@color/white"
         android:background="@drawable/button"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/scanButtonMain" />
+        android:id="@+id/scanButtonMain"
+        android:layout_alignLeft="@+id/listRoomsView"
+        android:layout_alignStart="@+id/listRoomsView"
+        android:layout_alignRight="@+id/listRoomsView"
+        android:layout_alignEnd="@+id/listRoomsView" />
 
 </RelativeLayout>

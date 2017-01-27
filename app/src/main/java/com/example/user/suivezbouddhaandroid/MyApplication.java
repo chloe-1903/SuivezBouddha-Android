@@ -41,7 +41,7 @@ public class MyApplication extends Application {
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 // Vibrate for 500 milliseconds
                 v.vibrate(500);
-                Toast.makeText(getApplicationContext(), "Vous êtes en salle " + targetRoom + ".", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Vous êtes arrivés à destination : " + targetRoom + ".", Toast.LENGTH_LONG).show();
                 beaconManager.stopMonitoring(region);
             }
             @Override

@@ -44,6 +44,11 @@ import com.vuforia.Tracker;
 import com.vuforia.TrackerManager;
 import com.vuforia.Vuforia;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
 import vuforia.utils.SampleApplicationControl;
 import vuforia.utils.SampleApplicationException;
 import vuforia.utils.SampleApplicationSession;
@@ -52,10 +57,12 @@ import vuforia.utils.SampleApplicationGLView;
 import vuforia.utils.Texture;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 
-public class ScanActivity extends Activity implements SampleApplicationControl {
+public class ScanActivity extends Activity implements SampleApplicationControl, Observer {
     private static final String LOGTAG = "ImageTargets";
 
     SampleApplicationSession vuforiaAppSession;
@@ -78,6 +85,9 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
     private boolean mFlash = false;
     private boolean mContAutofocus = false;
     private boolean mExtendedTracking = false;
+
+    private JSONObject jsonObject;
+    private Client client;
 
     private View mFlashOptionView;
 
@@ -131,7 +141,20 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
                 "droid");
 
-        //idStep = getIntent().getIntExtra("id", 0);
+        client = new Client();
+        client.addObserver(this);
+        client.connect();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        //TODO
+        jsonObject = client.getDirections();
+        try {
+            String arrowDir = jsonObject.getString("arrow");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     // Process Single Tap event to trigger autofocus

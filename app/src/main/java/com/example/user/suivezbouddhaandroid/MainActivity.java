@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         Log.d("QRCODE Test - parcouru ", rooms.get(num).get(3));
                     }
                     if (roomInfo.isEmpty()) {
-                        Toast.makeText(getApplicationContext(), "Ce QR code ne correspond à aucune salle", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Ce QRCode ne correspond à aucune salle", Toast.LENGTH_LONG).show();
                         return;
                     }
                     try {
@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         Utils.writeToFile(roomName + ";" + roomInfo.get(1) + ";" + roomInfo.get(0) +";" + roomInfo.get(2) +";", "RoomSelected.txt");
                         Log.d("QRCODE Test txt : ", roomName + ";" + roomInfo.get(1) + ";" + roomInfo.get(0) +";" + roomInfo.get(2) +";");
                         Intent myIntent = new Intent(getApplicationContext(), Menu.class);
+                        Toast.makeText(getApplicationContext(), "Salle de destination enregistrée", Toast.LENGTH_LONG).show();
                         startActivity(myIntent);
                     } catch (IOException e) {
                         e.printStackTrace();
