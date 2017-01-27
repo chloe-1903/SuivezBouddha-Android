@@ -17,6 +17,9 @@ import android.opengl.Matrix;
 import android.os.Handler;
 import android.util.Log;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 import com.vuforia.Device;
 import com.vuforia.Matrix44F;
 import com.vuforia.State;
@@ -24,6 +27,8 @@ import com.vuforia.Tool;
 import com.vuforia.Trackable;
 import com.vuforia.TrackableResult;
 import com.vuforia.Vuforia;
+
+import vuforia.utils.LeftArrow;
 import vuforia.utils.SampleAppRenderer;
 import vuforia.utils.SampleAppRendererControl;
 import vuforia.utils.SampleApplicationSession;
@@ -36,10 +41,6 @@ import vuforia.utils.Texture;
 
 import java.io.IOException;
 import java.util.Vector;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 
 // The renderer class for the ImageTargets sample. 
 public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRendererControl
@@ -59,6 +60,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
     private int texSampler2DHandle;
     
     private Arrow mArrow;
+    private LeftArrow mLArrow;
     
     private float kBuildingScale = 2.0f;
     private SampleApplication3DModel mBuildingsModel;
@@ -68,17 +70,12 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
     
     private static final float OBJECT_SCALE_FLOAT = 300.0f;
 
-    private boolean qrCode1 = false;
-    private boolean qrCode2 = false;
-
-    private boolean dataBool = false;
-    private int i = 0;
-    //private int idStep;
+    protected boolean dataBool = false;
+    protected int i = 0;
     private Intent returnIntent;
 
 
-    
-    //public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session, int idStep)
+
     public ImageTargetRenderer(ScanActivity activity, SampleApplicationSession session)
     {
         mActivity = activity;
@@ -86,7 +83,6 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
         // SampleAppRenderer used to encapsulate the use of RenderingPrimitives setting
         // the device mode AR/VR and stereo mode
         mSampleAppRenderer = new SampleAppRenderer(this, mActivity, Device.MODE.MODE_AR, false, 10f , 5000f);
-        //this.idStep = idStep;
     }
     
     
@@ -174,6 +170,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
 
         if(!mModelIsLoaded) {
             mArrow = new Arrow();
+            mLArrow = new LeftArrow();
 
             try {
                 mBuildingsModel = new SampleApplication3DModel();
@@ -188,11 +185,6 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             mActivity.loadingDialogHandler
                     .sendEmptyMessage(LoadingDialogHandler.HIDE_LOADING_DIALOG);
         }
-    }
-
-    public void updateConfiguration()
-    {
-        mSampleAppRenderer.onConfigurationChanged(mIsActive);
     }
 
     // The render function called from SampleAppRendering by using RenderingPrimitives views.
@@ -219,13 +211,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                     .convertPose2GLMatrix(result.getPose());
             float[] modelViewMatrix = modelViewMatrix_Vuforia.getData();
 
-            /*int textureIndex = trackable.getName().equalsIgnoreCase("stones") ? 0
-                    : 1;
-            textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2
-                    : textureIndex;
-            textureIndex = trackable.getName().equalsIgnoreCase("QRCode_1") ? 4
-                    : textureIndex;*/
-            int textureIndex = 4;
+            int textureIndex = 0;
 
             if(trackable.getName().equalsIgnoreCase("QRCode_1")) {
                 mActivity.runOnUiThread(new Runnable() {
@@ -367,10 +353,17 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
             GLES20.glUseProgram(shaderProgramID);
 
             if (!mActivity.isExtendedTrackingActive()) {
-                GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                        false, 0, mArrow.getVertices());
-                GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                        GLES20.GL_FLOAT, false, 0, mArrow.getTexCoords());
+                if (trackable.getName().equalsIgnoreCase("QRCode_6")) {
+                    GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                            false, 0, mLArrow.getVertices());
+                    GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                            GLES20.GL_FLOAT, false, 0, mLArrow.getTexCoords());
+                } else {
+                    GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                            false, 0, mArrow.getVertices());
+                    GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                            GLES20.GL_FLOAT, false, 0, mArrow.getTexCoords());
+                }
 
                 GLES20.glEnableVertexAttribArray(vertexHandle);
                 GLES20.glEnableVertexAttribArray(textureCoordHandle);
@@ -386,11 +379,11 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                         modelViewProjection, 0);
 
                 // finally draw the teapot
-                /*GLES20.glDrawElements(GLES20.GL_TRIANGLES,
-                        mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
-                        mTeapot.getIndices());*/
-                // and without indices...
-                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mArrow.getNumObjectVertex());
+                if (trackable.getName().equalsIgnoreCase("QRCode_6")) {
+                    GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mLArrow.getNumObjectVertex());
+                } else {
+                    GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mArrow.getNumObjectVertex());
+                }
 
                 // disable the enabled arrays
                 GLES20.glDisableVertexAttribArray(vertexHandle);
@@ -439,13 +432,4 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
         
     }
 
-    /*
-    public void setIdStep(int idStep) {
-        this.idStep = idStep;
-    }
-
-    public boolean isDataBool() {
-        return dataBool;
-    }
-     */
 }

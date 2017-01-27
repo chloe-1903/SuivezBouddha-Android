@@ -18,11 +18,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.vuforia.CameraDevice;
 import com.vuforia.DataSet;
@@ -47,63 +44,24 @@ import com.vuforia.Tracker;
 import com.vuforia.TrackerManager;
 import com.vuforia.Vuforia;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Vector;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.CheckBox;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
-import android.widget.Toast;
-
-import com.vuforia.CameraDevice;
-import com.vuforia.DataSet;
-import com.vuforia.Device;
-import com.vuforia.ObjectTracker;
-import com.vuforia.State;
-import com.vuforia.STORAGE_TYPE;
-import com.vuforia.Trackable;
-import com.vuforia.Tracker;
-import com.vuforia.TrackerManager;
-import com.vuforia.Vuforia;
 import vuforia.utils.SampleApplicationControl;
 import vuforia.utils.SampleApplicationException;
 import vuforia.utils.SampleApplicationSession;
 import vuforia.utils.LoadingDialogHandler;
 import vuforia.utils.SampleApplicationGLView;
 import vuforia.utils.Texture;
-import com.example.user.suivezbouddhaandroid.R;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 
-public class ScanActivity extends Activity implements SampleApplicationControl
-{
+public class ScanActivity extends Activity implements SampleApplicationControl {
     private static final String LOGTAG = "ImageTargets";
 
     SampleApplicationSession vuforiaAppSession;
 
     private DataSet mCurrentDataset;
-    private int mCurrentDatasetSelectionIndex = 0;
-    private int mStartDatasetsIndex = 0;
-    private int mDatasetsNumber = 0;
-    private ArrayList<String> mDatasetStrings = new ArrayList<String>();
+    private ArrayList<String> mDatasetStrings = new ArrayList<>();
 
     // Our OpenGL view:
     private SampleApplicationGLView mGlView;
@@ -145,8 +103,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
     // Called when the activity first starts or the user navigates back to an
     // activity.
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
 
@@ -179,28 +136,23 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
     // Process Single Tap event to trigger autofocus
     private class GestureListener extends
-            GestureDetector.SimpleOnGestureListener
-    {
+            GestureDetector.SimpleOnGestureListener {
         // Used to set autofocus one second after a manual focus is triggered
         private final Handler autofocusHandler = new Handler();
 
 
         @Override
-        public boolean onDown(MotionEvent e)
-        {
+        public boolean onDown(MotionEvent e) {
             return true;
         }
 
 
         @Override
-        public boolean onSingleTapUp(MotionEvent e)
-        {
+        public boolean onSingleTapUp(MotionEvent e) {
             // Generates a Handler to trigger autofocus
             // after 1 second
-            autofocusHandler.postDelayed(new Runnable()
-            {
-                public void run()
-                {
+            autofocusHandler.postDelayed(new Runnable() {
+                public void run() {
                     boolean result = CameraDevice.getInstance().setFocusMode(
                             CameraDevice.FOCUS_MODE.FOCUS_MODE_TRIGGERAUTO);
 
@@ -217,45 +169,31 @@ public class ScanActivity extends Activity implements SampleApplicationControl
     // We want to load specific textures from the APK, which we will later use
     // for rendering.
 
-    private void loadTextures()
-    {
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png",
-                getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png",
-                getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotRed.png",
-                getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("ImageTargets/Buildings.jpeg",
-                getAssets()));
+    private void loadTextures() {
         mTextures.add(Texture.loadTextureFromApk("arrow.png", getAssets()));
     }
 
 
     // Called when the activity will start interacting with the user.
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         Log.d(LOGTAG, "onResume");
         super.onResume();
 
         // This is needed for some Droid devices to force portrait
-        if (mIsDroidDevice)
-        {
+        if (mIsDroidDevice) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        try
-        {
+        try {
             vuforiaAppSession.resumeAR();
-        } catch (SampleApplicationException e)
-        {
+        } catch (SampleApplicationException e) {
             Log.e(LOGTAG, e.getString());
         }
 
         // Resume the GL view:
-        if (mGlView != null)
-        {
+        if (mGlView != null) {
             mGlView.setVisibility(View.VISIBLE);
             mGlView.onResume();
         }
@@ -265,8 +203,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
     // Callback for configuration changes the activity handles itself
     @Override
-    public void onConfigurationChanged(Configuration config)
-    {
+    public void onConfigurationChanged(Configuration config) {
         Log.d(LOGTAG, "onConfigurationChanged");
         super.onConfigurationChanged(config);
 
@@ -276,51 +213,41 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
     // Called when the system is about to start resuming a previous activity.
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         Log.d(LOGTAG, "onPause");
         super.onPause();
 
-        if (mGlView != null)
-        {
+        if (mGlView != null) {
             mGlView.setVisibility(View.INVISIBLE);
             mGlView.onPause();
         }
 
         // Turn off the flash
-        if (mFlashOptionView != null && mFlash)
-        {
+        if (mFlashOptionView != null && mFlash) {
             // OnCheckedChangeListener is called upon changing the checked state
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-            {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 ((Switch) mFlashOptionView).setChecked(false);
-            } else
-            {
+            } else {
                 ((CheckBox) mFlashOptionView).setChecked(false);
             }
         }
 
-        try
-        {
+        try {
             vuforiaAppSession.pauseAR();
-        } catch (SampleApplicationException e)
-        {
+        } catch (SampleApplicationException e) {
             Log.e(LOGTAG, e.getString());
         }
     }
 
     // The final call you receive before your activity is destroyed.
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         Log.d(LOGTAG, "onDestroy");
         super.onDestroy();
 
-        try
-        {
+        try {
             vuforiaAppSession.stopAR();
-        } catch (SampleApplicationException e)
-        {
+        } catch (SampleApplicationException e) {
             Log.e(LOGTAG, e.getString());
         }
 
@@ -333,8 +260,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
 
     // Initializes AR application components.
-    private void initApplicationAR()
-    {
+    private void initApplicationAR() {
         // Create OpenGL ES view:
         int depthSize = 16;
         int stencilSize = 0;
@@ -350,8 +276,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
     }
 
 
-    private void startLoadingAnimation()
-    {
+    private void startLoadingAnimation() {
         mUILayout = (RelativeLayout) View.inflate(this, R.layout.camera_overlay,
                 null);
 
@@ -375,8 +300,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
     // Methods to load and destroy tracking data.
     @Override
-    public boolean doLoadTrackersData()
-    {
+    public boolean doLoadTrackersData() {
         TrackerManager tManager = TrackerManager.getInstance();
         ObjectTracker objectTracker = (ObjectTracker) tManager
                 .getTracker(ObjectTracker.getClassType());
@@ -398,11 +322,9 @@ public class ScanActivity extends Activity implements SampleApplicationControl
             return false;
 
         int numTrackables = mCurrentDataset.getNumTrackables();
-        for (int count = 0; count < numTrackables; count++)
-        {
+        for (int count = 0; count < numTrackables; count++) {
             Trackable trackable = mCurrentDataset.getTrackable(count);
-            if(isExtendedTrackingActive())
-            {
+            if (isExtendedTrackingActive()) {
                 trackable.startExtendedTracking();
             }
 
@@ -417,8 +339,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
 
     @Override
-    public boolean doUnloadTrackersData()
-    {
+    public boolean doUnloadTrackersData() {
         // Indicate if the trackers were unloaded correctly
         boolean result = true;
 
@@ -428,14 +349,11 @@ public class ScanActivity extends Activity implements SampleApplicationControl
         if (objectTracker == null)
             return false;
 
-        if (mCurrentDataset != null && mCurrentDataset.isActive())
-        {
+        if (mCurrentDataset != null && mCurrentDataset.isActive()) {
             if (objectTracker.getActiveDataSet().equals(mCurrentDataset)
-                    && !objectTracker.deactivateDataSet(mCurrentDataset))
-            {
+                    && !objectTracker.deactivateDataSet(mCurrentDataset)) {
                 result = false;
-            } else if (!objectTracker.destroyDataSet(mCurrentDataset))
-            {
+            } else if (!objectTracker.destroyDataSet(mCurrentDataset)) {
                 result = false;
             }
 
@@ -447,11 +365,9 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
 
     @Override
-    public void onInitARDone(SampleApplicationException exception)
-    {
+    public void onInitARDone(SampleApplicationException exception) {
 
-        if (exception == null)
-        {
+        if (exception == null) {
             initApplicationAR();
 
             mRenderer.setActive(true);
@@ -469,11 +385,9 @@ public class ScanActivity extends Activity implements SampleApplicationControl
             // Sets the layout background to transparent
             mUILayout.setBackgroundColor(Color.TRANSPARENT);
 
-            try
-            {
+            try {
                 vuforiaAppSession.startAR(CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_DEFAULT);
-            } catch (SampleApplicationException e)
-            {
+            } catch (SampleApplicationException e) {
                 Log.e(LOGTAG, e.getString());
             }
 
@@ -485,12 +399,8 @@ public class ScanActivity extends Activity implements SampleApplicationControl
             else
                 Log.e(LOGTAG, "Unable to enable continuous autofocus");
 
-            /*mSampleAppMenu = new SampleAppMenu(this, this, "Image Targets",
-                    mGlView, mUILayout, null);*/
-            setSampleAppMenuSettings();
 
-        } else
-        {
+        } else {
             Log.e(LOGTAG, exception.getString());
             showInitializationErrorMessage(exception.getString());
         }
@@ -498,15 +408,11 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
 
     // Shows initialization error messages as System dialogs
-    public void showInitializationErrorMessage(String message)
-    {
+    public void showInitializationErrorMessage(String message) {
         final String errorMessage = "Veuillez relancer le scanner.";
-        runOnUiThread(new Runnable()
-        {
-            public void run()
-            {
-                if (mErrorDialog != null)
-                {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (mErrorDialog != null) {
                     mErrorDialog.dismiss();
                 }
 
@@ -519,10 +425,8 @@ public class ScanActivity extends Activity implements SampleApplicationControl
                         .setCancelable(false)
                         .setIcon(0)
                         .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener()
-                                {
-                                    public void onClick(DialogInterface dialog, int id)
-                                    {
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
                                         finish();
                                     }
                                 });
@@ -535,17 +439,14 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
 
     @Override
-    public void onVuforiaUpdate(State state)
-    {
-        if (mSwitchDatasetAsap)
-        {
+    public void onVuforiaUpdate(State state) {
+        if (mSwitchDatasetAsap) {
             mSwitchDatasetAsap = false;
             TrackerManager tm = TrackerManager.getInstance();
             ObjectTracker ot = (ObjectTracker) tm.getTracker(ObjectTracker
                     .getClassType());
             if (ot == null || mCurrentDataset == null
-                    || ot.getActiveDataSet() == null)
-            {
+                    || ot.getActiveDataSet() == null) {
                 Log.d(LOGTAG, "Failed to swap datasets");
                 return;
             }
@@ -557,8 +458,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
 
     @Override
-    public boolean doInitTrackers()
-    {
+    public boolean doInitTrackers() {
         // Indicate if the trackers were initialized correctly
         boolean result = true;
 
@@ -567,14 +467,12 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
         // Trying to initialize the image tracker
         tracker = tManager.initTracker(ObjectTracker.getClassType());
-        if (tracker == null)
-        {
+        if (tracker == null) {
             Log.e(
                     LOGTAG,
                     "Tracker not initialized. Tracker already initialized or the camera is already started");
             result = false;
-        } else
-        {
+        } else {
             Log.i(LOGTAG, "Tracker successfully initialized");
         }
         return result;
@@ -582,8 +480,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
 
     @Override
-    public boolean doStartTrackers()
-    {
+    public boolean doStartTrackers() {
         // Indicate if the trackers were started correctly
         boolean result = true;
 
@@ -597,8 +494,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl
 
 
     @Override
-    public boolean doStopTrackers()
-    {
+    public boolean doStopTrackers() {
         // Indicate if the trackers were stopped correctly
         boolean result = true;
 
@@ -610,10 +506,8 @@ public class ScanActivity extends Activity implements SampleApplicationControl
         return result;
     }
 
-
     @Override
-    public boolean doDeinitTrackers()
-    {
+    public boolean doDeinitTrackers() {
         // Indicate if the trackers were deinitialized correctly
         boolean result = true;
 
@@ -623,228 +517,13 @@ public class ScanActivity extends Activity implements SampleApplicationControl
         return result;
     }
 
-
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        // Process the Gestures
-        /*if (mSampleAppMenu != null && mSampleAppMenu.processEvent(event))
-            return true;*/
-
+    public boolean onTouchEvent(MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }
 
-
-    boolean isExtendedTrackingActive()
-    {
+    boolean isExtendedTrackingActive() {
         return mExtendedTracking;
     }
 
-    final public static int CMD_BACK = -1;
-    final public static int CMD_EXTENDED_TRACKING = 1;
-    final public static int CMD_AUTOFOCUS = 2;
-    final public static int CMD_FLASH = 3;
-    final public static int CMD_CAMERA_FRONT = 4;
-    final public static int CMD_CAMERA_REAR = 5;
-    final public static int CMD_DATASET_START_INDEX = 6;
-
-
-    // This method sets the menu's settings
-    private void setSampleAppMenuSettings()
-    {
-        /*SampleAppMenuGroup group;
-
-        group = mSampleAppMenu.addGroup("", false);
-        group.addTextItem(getString(R.string.menu_back), -1);
-
-        group = mSampleAppMenu.addGroup("", true);
-        group.addSelectionItem(getString(R.string.menu_extended_tracking),
-            CMD_EXTENDED_TRACKING, false);
-        group.addSelectionItem(getString(R.string.menu_contAutofocus),
-            CMD_AUTOFOCUS, mContAutofocus);
-        mFlashOptionView = group.addSelectionItem(
-            getString(R.string.menu_flash), CMD_FLASH, false);*/
-
-        Camera.CameraInfo ci = new Camera.CameraInfo();
-        boolean deviceHasFrontCamera = false;
-        boolean deviceHasBackCamera = false;
-        for (int i = 0; i < Camera.getNumberOfCameras(); i++)
-        {
-            Camera.getCameraInfo(i, ci);
-            if (ci.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
-                deviceHasFrontCamera = true;
-            else if (ci.facing == Camera.CameraInfo.CAMERA_FACING_BACK)
-                deviceHasBackCamera = true;
-        }
-        /*
-        if (deviceHasBackCamera && deviceHasFrontCamera)
-        {
-            group = mSampleAppMenu.addGroup(getString(R.string.menu_camera),
-                true);
-            group.addRadioItem(getString(R.string.menu_camera_front),
-                CMD_CAMERA_FRONT, false);
-            group.addRadioItem(getString(R.string.menu_camera_back),
-                CMD_CAMERA_REAR, true);
-        }
-
-        group = mSampleAppMenu
-            .addGroup(getString(R.string.menu_datasets), true);
-        mStartDatasetsIndex = CMD_DATASET_START_INDEX;
-        mDatasetsNumber = mDatasetStrings.size();
-
-        //group.addRadioItem("Stones & Chips", mStartDatasetsIndex, true);
-        //group.addRadioItem("Tarmac", mStartDatasetsIndex + 1, false);
-        group.addRadioItem("SuivezBouddha", mStartDatasetsIndex, true);
-
-        mSampleAppMenu.attachMenu();*/
-    }
-
-
-    /*@Override
-    public boolean menuProcess(int command)
-    {
-
-        boolean result = true;
-
-        switch (command)
-        {
-            case CMD_BACK:
-                finish();
-                break;
-
-            case CMD_FLASH:
-                result = CameraDevice.getInstance().setFlashTorchMode(!mFlash);
-
-                if (result)
-                {
-                    mFlash = !mFlash;
-                } else
-                {
-                    showToast(getString(mFlash ? R.string.menu_flash_error_off
-                            : R.string.menu_flash_error_on));
-                    Log.e(LOGTAG,
-                            getString(mFlash ? R.string.menu_flash_error_off
-                                    : R.string.menu_flash_error_on));
-                }
-                break;
-
-            case CMD_AUTOFOCUS:
-
-                if (mContAutofocus)
-                {
-                    result = CameraDevice.getInstance().setFocusMode(
-                            CameraDevice.FOCUS_MODE.FOCUS_MODE_NORMAL);
-
-                    if (result)
-                    {
-                        mContAutofocus = false;
-                    } else
-                    {
-                        showToast(getString(R.string.menu_contAutofocus_error_off));
-                        Log.e(LOGTAG,
-                                getString(R.string.menu_contAutofocus_error_off));
-                    }
-                } else
-                {
-                    result = CameraDevice.getInstance().setFocusMode(
-                            CameraDevice.FOCUS_MODE.FOCUS_MODE_CONTINUOUSAUTO);
-
-                    if (result)
-                    {
-                        mContAutofocus = true;
-                    } else
-                    {
-                        showToast(getString(R.string.menu_contAutofocus_error_on));
-                        Log.e(LOGTAG,
-                                getString(R.string.menu_contAutofocus_error_on));
-                    }
-                }
-
-                break;
-
-            case CMD_CAMERA_FRONT:
-            case CMD_CAMERA_REAR:
-
-                // Turn off the flash
-                if (mFlashOptionView != null && mFlash)
-                {
-                    // OnCheckedChangeListener is called upon changing the checked state
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                    {
-                        ((Switch) mFlashOptionView).setChecked(false);
-                    } else
-                    {
-                        ((CheckBox) mFlashOptionView).setChecked(false);
-                    }
-                }
-
-                vuforiaAppSession.stopCamera();
-
-                try
-                {
-                    vuforiaAppSession
-                            .startAR(command == CMD_CAMERA_FRONT ? CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_FRONT
-                                    : CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_BACK);
-
-                    mRenderer.updateConfiguration();
-
-                } catch (SampleApplicationException e)
-                {
-                    showToast(e.getString());
-                    Log.e(LOGTAG, e.getString());
-                    result = false;
-                }
-                doStartTrackers();
-                break;
-
-            case CMD_EXTENDED_TRACKING:
-                for (int tIdx = 0; tIdx < mCurrentDataset.getNumTrackables(); tIdx++)
-                {
-                    Trackable trackable = mCurrentDataset.getTrackable(tIdx);
-
-                    if (!mExtendedTracking)
-                    {
-                        if (!trackable.startExtendedTracking())
-                        {
-                            Log.e(LOGTAG,
-                                    "Failed to start extended tracking target");
-                            result = false;
-                        } else
-                        {
-                            Log.d(LOGTAG,
-                                    "Successfully started extended tracking target");
-                        }
-                    } else
-                    {
-                        if (!trackable.stopExtendedTracking())
-                        {
-                            Log.e(LOGTAG,
-                                    "Failed to stop extended tracking target");
-                            result = false;
-                        } else
-                        {
-                            Log.d(LOGTAG,
-                                    "Successfully started extended tracking target");
-                        }
-                    }
-                }
-
-                if (result)
-                    mExtendedTracking = !mExtendedTracking;
-
-                break;
-
-            default:
-                if (command >= mStartDatasetsIndex
-                        && command < mStartDatasetsIndex + mDatasetsNumber)
-                {
-                    mSwitchDatasetAsap = true;
-                    mCurrentDatasetSelectionIndex = command
-                            - mStartDatasetsIndex;
-                }
-                break;
-        }
-
-        return result;
-    }*/
 }
