@@ -58,6 +58,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.orbotix.common.RobotChangedStateListener.RobotChangedStateNotificationType.Connected;
 
@@ -286,12 +288,6 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 //Check if the client is connected
                 while(!client.isConnected());
 
-                //Set buttons enable
-                switchButtonState(scanButton, true);
-                _calibrationView.setEnabled(true);
-                _calibrationButtonView.setAlpha(1f);
-                _calibrationButtonView.setEnabled(true);
-
                 break;
             }
             case Connecting: {
@@ -312,10 +308,16 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                                     //Disconnect and reconnect bluetooth
                                     discoveryFailed = true;
                                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                                    Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
                                     bluetoothAdapter.disable();
-                                    startActivityForResult(intentBtEnabled, 0);
+                                    //Wait a bit, so we are sure that bluetooth is disable
+                                    new Timer().schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                            startActivityForResult(intentBtEnabled, 0);
+                                        }
+                                    }, 3000); //TODO 4000 was working, testing with 3000
                                 }
                             }
                         }.start();
@@ -809,7 +811,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
      * @param height
      * @param width
      */
-    public void imgPopup(final String title, final String text, final int imageInt, final int height, final int width) {
+    public void imgPopup(final String title, final String text, final int imageInt, final int height, final int width, final boolean enableButtons) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -835,7 +837,13 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                //nothing, just close automatically
+                                if(enableButtons) {
+                                    //Set buttons enable when the user click on ok on the last instructions popups
+                                    switchButtonState(scanButton, true);
+                                    _calibrationView.setEnabled(true);
+                                    _calibrationButtonView.setAlpha(1f);
+                                    _calibrationButtonView.setEnabled(true);
+                                }
                             }
                         });
                 //To avoid double popup problem
@@ -850,8 +858,10 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                 //Center the text
                 TextView messageText = (TextView)alertDialog.findViewById(android.R.id.message);
                 messageText.setGravity(Gravity.CENTER);
+
             }
         }, (0));
+
     }
 
     /**
@@ -860,19 +870,19 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
     public void instructionsPopup() {
         //Pop 4
         String message = "Lorsque celle-ci s'arrêtera, il vous faudra scanner le QRCode le plus proche à l'aide du bouton \"SCAN\". Si vous êtes perdu, pas d'inquiétude, vous pourrez utiliser le bouton \"JE SUIS PERDU\".";
-        imgPopup("Instructions", message, R.drawable.menu2, 77, 318);
+        imgPopup("Instructions", message, R.drawable.menu2, 77, 318, true);
 
         //Pop 3
         message = "Une fois que Bouddha sera bien calibré, vous pourrez appuyer sur le bouton \"SCAN\" pour scanner le QRCode le plus proche et vous commencerez à suivre la boule ! En cas de problème, vous pouvez toujours appuyer sur le bouton \"STOP\" pour arrêter la sphère.";
-        imgPopup("Instructions", message, R.drawable.menu, 180, 318);
+        imgPopup("Instructions", message, R.drawable.menu, 180, 318, false);
 
         //Pop 2
         message = "Une fois la boule positionnée et connectée, mettez-vous derrière la sphère et utilisez le bouton rond pour calibrer Bouddha comme sur l'image. Cette opération n'est a effectuer uniquement lors du premier départ à l'accueil.";
-        imgPopup("Instructions", message, R.drawable.calibration, 166, 158);
+        imgPopup("Instructions", message, R.drawable.calibration, 166, 158, false);
 
         //Pop 1
         message = "Bienvenue dans l'utilisation de Bouddha ! Commencez par positionner la sphère sur la pastille rouge du point de départ.";
-        imgPopup("Instructions", message, R.drawable.pastille2, 189, 190);
+        imgPopup("Instructions", message, R.drawable.pastille2, 189, 190, false);
     }
 
     /**
