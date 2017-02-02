@@ -446,10 +446,56 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
 
             if (!mActivity.isExtendedTrackingActive()) {
 
-                GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                        false, 0, mArrow.getVertices());
-                GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                        GLES20.GL_FLOAT, false, 0, mArrow.getTexCoords());
+                switch(mActivity.getArrowDir()) {
+                    case "left":
+                        GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                                false, 0, mLArrow.getVertices());
+                        GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                                GLES20.GL_FLOAT, false, 0, mLArrow.getTexCoords());
+                        break;
+
+                    case "right":
+                        GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                            false, 0, mArrow.getVertices());
+                        GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                            GLES20.GL_FLOAT, false, 0, mArrow.getTexCoords());
+                        break;
+
+                    case "back":
+                        GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                                false, 0, mBArrow.getVertices());
+                        GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                                GLES20.GL_FLOAT, false, 0, mBArrow.getTexCoords());
+                        break;
+
+                    case "back-left":
+                        GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                                false, 0, mBLArrow.getVertices());
+                        GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                                GLES20.GL_FLOAT, false, 0, mBLArrow.getTexCoords());
+                        break;
+
+                    case "front-right":
+                        GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                                false, 0, mFRArrow.getVertices());
+                        GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                                GLES20.GL_FLOAT, false, 0, mFRArrow.getTexCoords());
+                        break;
+
+                    case "front-left":
+                        GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                                false, 0, mFLArrow.getVertices());
+                        GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                                GLES20.GL_FLOAT, false, 0, mFLArrow.getTexCoords());
+                        break;
+
+                    case "none":
+                        break;
+                    
+                    default:
+                        break;
+
+                }
 
                 GLES20.glEnableVertexAttribArray(vertexHandle);
                 GLES20.glEnableVertexAttribArray(textureCoordHandle);
@@ -464,7 +510,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                 GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false,
                         modelViewProjection, 0);
 
-                // finally draw the teapot
+                // finally draw the arrow
                 switch(mActivity.getArrowDir()) {
                     case "left":
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mLArrow.getNumObjectVertex());
