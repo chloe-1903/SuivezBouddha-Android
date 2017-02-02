@@ -1,11 +1,15 @@
 package com.example.user.suivezbouddhaandroid;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -115,31 +119,36 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         String roomName = array.get(i);
 
                         try {
+                            HashMap<String, String> planning = new HashMap<String, String>();
                             String androidPos = "";
                             String floor = "";
                             String qrcode = "";
-                            for (int j = 0; j< rooms.length(); j++) {
+                            for (int j = 0; j < rooms.length(); j++) {
                                 JSONArray jsonFloor = rooms.getJSONArray(j);
                                 for (int k = 0; k < jsonFloor.length(); k++) {
                                     JSONObject jsonRoom = jsonFloor.getJSONObject(k);
-                                    if(jsonRoom.getString("number").equals(roomName)){
+                                    if (jsonRoom.getString("number").equals(roomName)) {
                                         androidPos = jsonRoom.getString("positionAndroid");
-                                        floor = Integer.toString(j+1);
+                                        floor = Integer.toString(j + 1);
                                         qrcode = jsonRoom.getString("qrcodeId");
+                                        JSONObject jsonPlanning = jsonRoom.getJSONObject("activity");
+                                        planning.put("8h - 9h", jsonPlanning.getString("8h - 9h"));
+                                        planning.put("9h - 10h", jsonPlanning.getString("9h - 10h"));
+                                        planning.put("10h - 11h", jsonPlanning.getString("10h - 11h"));
+                                        planning.put("11h - 12h", jsonPlanning.getString("11h - 12h"));
+                                        planning.put("12h - 13h", jsonPlanning.getString("12h - 13h"));
+                                        planning.put("13h - 14h", jsonPlanning.getString("13h - 14h"));
+                                        planning.put("14h - 15h", jsonPlanning.getString("14h - 15h"));
+                                        planning.put("15h - 16h", jsonPlanning.getString("15h - 16h"));
                                     }
                                 }
                             }
                             //nom - android pos - étage - qr code
-                            Log.d("debug salle :", roomName+";"+ androidPos + ";" + floor + ";" + qrcode+";");
-                            Utils.writeToFile(roomName+";"+ androidPos + ";" + floor + ";" + qrcode+";", "RoomSelected.txt");
-                        } catch (IOException e) {
+                            Log.d("debug salle :", roomName + ";" + androidPos + ";" + floor + ";" + qrcode + ";");
+                            planningPopup(roomName, androidPos, floor, qrcode, planning);
+                        }catch (JSONException e) {
                             e.printStackTrace();
-                        } catch (JSONException e) {
-                        e.printStackTrace();
                         }
-
-                        Intent myIntent = new Intent(getApplicationContext(), Menu.class);
-                        startActivity(myIntent);
                     }
                 });
             }
@@ -194,4 +203,54 @@ public class MainActivity extends AppCompatActivity implements Observer{
             }
         }
     }
+
+    private void goRoom(String roomName, String androidPos, String floor, String qrcode){
+        try{
+            Utils.writeToFile(roomName+";"+ androidPos + ";" + floor + ";" + qrcode+";", "RoomSelected.txt");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        Intent myIntent = new Intent(getApplicationContext(), Menu.class);
+        startActivity(myIntent);
+    }
+
+
+    public void planningPopup(final String roomNumber, final String androidPos, final String floor, final String qrcode,final HashMap<String, String> planning) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                Log.d("debug salle", "in planning popup");
+                //popup params
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog.setTitle("Planing de la salle "+ roomNumber);
+                String message="";
+                for (String plage : planning.keySet()) {
+                    if(!planning.get(plage).equals(""))
+                        message+="\n "+ plage + " : "+ planning.get(plage);
+                }
+                alertDialog.setMessage(message);
+                alertDialog.setCanceledOnTouchOutside(true);
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Y ALLER!",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                goRoom(roomNumber, androidPos, floor, qrcode);
+                            }
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE , "AUTRE SALLE",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                //show popup
+                alertDialog.show();
+
+                //Center the text
+                TextView messageText = (TextView) alertDialog.findViewById(android.R.id.message);
+                messageText.setGravity(Gravity.CENTER);
+            }
+        }, 0);
+    }
+
 }
