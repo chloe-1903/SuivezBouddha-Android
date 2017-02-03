@@ -750,7 +750,9 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         }
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Vous n'avez pas scanné le bon QRCode pour le parcours sélectionné. Etes-vous perdu ? ", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "Vous n'avez pas scanné le bon QRCode pour le parcours sélectionné. Etes-vous perdu ? ", Toast.LENGTH_LONG).show();
+                    String message = "Vous n'avez pas scanné le bon QRCode pour le parcours sélectionné. Pas de problème, positionnez la boule sur le point rouge du QRCode que vous venez de scanner et utilisez le bouton \"JE SUIS PERDU\".";
+                    imgPopup("Vous êtes perdu ?", message, R.drawable.pastille2, 189, 190, false);
                     //Enable lost button
                     switchButtonState(perduButton, true);
                 }
