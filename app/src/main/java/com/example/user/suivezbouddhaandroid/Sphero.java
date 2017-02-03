@@ -422,52 +422,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                     if (jsonObject == null) {
                         myIntent.putExtra("arrowDir", "none");
                     } else {
-                        switch (jsonObject.getString("direction")) {
-                            case "1-2":
-                                myIntent.putExtra("arrowDir", "right");
-                                break;
-                            case "2-1":
-                                myIntent.putExtra("arrowDir", "right");
-                                break;
-                            case "2-3":
-                                Log.d("roomSelectedId = ", roomSelectedId);
-                                if (roomSelectedId.equals("O+318")) {
-                                    myIntent.putExtra("arrowDir", "left");
-                                } else {
-                                    myIntent.putExtra("arrowDir", "right");
-                                }
-                                break;
-                            case "3-2":
-                                myIntent.putExtra("arrowDir", "back");
-                                break;
-                            case "3-4":
-                                myIntent.putExtra("arrowDir", "right");
-                                break;
-                            case "4-3":
-                                myIntent.putExtra("arrowDir", "back");
-                                break;
-                            case "4-6":
-                                myIntent.putExtra("arrowDir", "none");
-                                break;
-                            case "6-4":
-                                myIntent.putExtra("arrowDir", "left");
-                                break;
-                            case "3-5":
-                                myIntent.putExtra("arrowDir", "front-left");
-                                break;
-                            case "5-3":
-                                myIntent.putExtra("arrowDir", "back");
-                                break;
-                            case "5-7":
-                                myIntent.putExtra("arrowDir", "none");
-                                break;
-                            case "7-5":
-                                myIntent.putExtra("arrowDir", "right");
-                                break;
-                            default:
-                                myIntent.putExtra("arrowDir", "none");
-                                break;
-                        }
+                        myIntent.putExtra("arrowDir", jsonObject.getString("arrow"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
