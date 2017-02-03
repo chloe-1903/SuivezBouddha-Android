@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
                 }
                 alertDialog.setMessage(message);
                 alertDialog.setCanceledOnTouchOutside(true);
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Y ALLER!",
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Y ALLER !",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 goRoom(roomNumber, androidPos, floor, qrcode);
@@ -245,10 +245,6 @@ public class MainActivity extends AppCompatActivity implements Observer{
 
                 //show popup
                 alertDialog.show();
-
-                //Center the text
-                TextView messageText = (TextView) alertDialog.findViewById(android.R.id.message);
-                messageText.setGravity(Gravity.CENTER);
             }
         }, 0);
     }
