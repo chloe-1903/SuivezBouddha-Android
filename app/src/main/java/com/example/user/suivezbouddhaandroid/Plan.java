@@ -71,7 +71,6 @@ public class Plan extends AppCompatActivity implements Observer {
                 startActivityForResult(intent, 1);
             }
         });
-        //client.askPosition("0");
 
         //Instruction popup
         String message = "Scannez les QRCodes à l'aide du bouton \"OÙ SUIS-JE ?\" pour afficher votre position. La salle est indiquée par un point vert et votre position par un point rouge.";
@@ -79,6 +78,8 @@ public class Plan extends AppCompatActivity implements Observer {
     }
 
     public void drawPosition(){
+        if (bitmap!=null && tempBitmap!=null)//Si on a déjà dessiné la carte
+            removeOldMap();
         runOnUiThread(new Runnable() {
             public void run() {
                 ImageView imageView = (ImageView) findViewById(R.id.img);
@@ -191,14 +192,16 @@ public class Plan extends AppCompatActivity implements Observer {
 
     @Override
     protected void onDestroy() {
+        removeOldMap();
+        super.onDestroy();
+    }
 
+    public void removeOldMap(){
         //Recycling bitmap to avoid out of memory
         bitmap.recycle();
         bitmap=null;
 
         tempBitmap.recycle();
         tempBitmap=null;
-
-        super.onDestroy();
     }
 }
