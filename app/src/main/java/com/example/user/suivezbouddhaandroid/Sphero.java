@@ -349,7 +349,25 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
 
         //If a robot is connected to the device, disconnect it
         if( mRobot != null ) {
+            // idee no 1 : essayer de tout déco de la sphéro
+            mRobot.stop();
             mRobot.disconnect();
+            mRobot.disableSensors();
+
+            // idee no 2 : désactiver puis réactiver le bluetooth
+            /*BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (mBluetoothAdapter.isEnabled()) {
+                mBluetoothAdapter.disable();
+            }
+
+            if (mBluetoothAdapter == null) {
+                // Device does not support Bluetooth
+            }
+
+            if (!mBluetoothAdapter.isEnabled()) {
+                mBluetoothAdapter.enable();
+            }*/
+
             mRobot = null;
         }
 

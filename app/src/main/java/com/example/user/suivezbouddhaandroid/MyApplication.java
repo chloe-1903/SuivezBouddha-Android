@@ -43,6 +43,7 @@ public class MyApplication extends Application {
                 v.vibrate(500);
                 Toast.makeText(getApplicationContext(), "Vous êtes arrivés à destination : " + targetRoom + ".", Toast.LENGTH_LONG).show();
                 beaconManager.stopMonitoring(region);
+                beaconManager.disconnect();
             }
             @Override
             public void onExitedRegion(Region region) {
