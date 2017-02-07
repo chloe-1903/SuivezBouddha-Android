@@ -428,6 +428,8 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                    } else if (QRCodeID == 2 && roomSelectedId.equals("O+303")) {
+                        tmp = "left";
                     } else {
                         try {
                             tmp = jsonObject.getString("arrow");
