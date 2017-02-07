@@ -240,7 +240,7 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
         if( !_currentDiscoveryAgent.isDiscovering() ) {
             try {
                 _currentDiscoveryAgent.startDiscovery(getApplicationContext());
-                Toast.makeText(getApplicationContext(), "Recherche...", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Recherche...", Toast.LENGTH_LONG).show();
                 Log.d("Sphero", "Recherche");
             } catch (DiscoveryException e) {
                 Toast.makeText(getApplicationContext(), "Veuillez allumer le bluetooth", Toast.LENGTH_LONG).show();
