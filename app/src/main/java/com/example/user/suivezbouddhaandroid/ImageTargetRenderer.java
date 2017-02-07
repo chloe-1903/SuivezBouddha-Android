@@ -514,21 +514,27 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, SampleAppRen
                 switch(mActivity.getArrowDir()) {
                     case "left":
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mLArrow.getNumObjectVertex());
+                        mModelIsLoaded = false;
                         break;
                     case "right":
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mArrow.getNumObjectVertex());
+                        mModelIsLoaded = false;
                         break;
                     case "back":
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mBArrow.getNumObjectVertex());
+                        mModelIsLoaded = false;
                         break;
                     case "back-left":
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mBLArrow.getNumObjectVertex());
+                        mModelIsLoaded = false;
                         break;
                     case "front-right":
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mFRArrow.getNumObjectVertex());
+                        mModelIsLoaded = false;
                         break;
                     case "front-left":
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mFLArrow.getNumObjectVertex());
+                        mModelIsLoaded = false;
                         break;
                     case "none":
                         break;

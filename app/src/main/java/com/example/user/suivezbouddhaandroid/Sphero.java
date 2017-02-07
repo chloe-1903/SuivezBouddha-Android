@@ -418,14 +418,24 @@ public class Sphero extends Activity implements RobotChangedStateListener, View.
             case R.id.scan: {
                 //Start scan activity
                 Intent myIntent = new Intent(getApplicationContext(), ScanActivity.class);
-                try {
-                    if (jsonObject == null) {
-                        myIntent.putExtra("arrowDir", "none");
+                String tmp = "none";
+                if (jsonObject == null) {
+                    myIntent.putExtra("arrowDir", "none");
+                } else {
+                    if (QRCodeID == 3 && roomSelectedId.equals("O+318")) {
+                        try {
+                            tmp = jsonObject.getString("altarrow");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                        myIntent.putExtra("arrowDir", jsonObject.getString("arrow"));
+                        try {
+                            tmp = jsonObject.getString("arrow");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    myIntent.putExtra("arrowDir", tmp);
                 }
                 startActivityForResult(myIntent, 1);
 

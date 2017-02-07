@@ -209,7 +209,7 @@ public class ScanActivity extends Activity implements SampleApplicationControl {
 
         Intent intent = getIntent();
         arrowDir = intent.getStringExtra("arrowDir");
-        System.out.println("arrowDir dans scan activity : " + arrowDir);
+        Log.d("caca", "arrowDir dans scan activity : " + arrowDir);
 
     }
 
