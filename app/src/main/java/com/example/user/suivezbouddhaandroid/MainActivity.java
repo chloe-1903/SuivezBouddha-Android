@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         String roomName = array.get(i);
 
                         try {
-                            HashMap<String, String> planning = new HashMap<String, String>();
+                            LinkedHashMap<String, String> planning = new LinkedHashMap<String, String>();
                             String androidPos = "";
                             String floor = "";
                             String qrcode = "";
