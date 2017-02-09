@@ -64,6 +64,26 @@ public class MyApplication extends Application {
             }
         });
 
+        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+                beaconManager.startMonitoring(new Region(
+                        "monitored region",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        14878, 34184));
+            }
+        });
+
+        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+                beaconManager.startMonitoring(new Region(
+                        "monitored region",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        31250, 14836));
+            }
+        });
+
     }
 
     /*public void showNotification(String title, String message) {
